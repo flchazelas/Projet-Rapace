@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Project Rapace</string>
+    <string name="password">Mot de passe</string>
+    <string name="validate">Valider</string>
+    <string name="login">Se connecter</string>
+    <string name="pseudo">Pseudo</string>
+    <string name="register">S\'enregistrer</string>
+    <string name="connection_failed">Echec de connexion</string>
+    <string name="password_or_username_wrong">Votre Pseudo ou Mot de Passe est erroné ! Veuillez vous reconnecter !</string>
+    <string name="try_login">Veuillez retentez de vous connecter !</string>
+    <string name="return_">Retour</string>
+</resources>

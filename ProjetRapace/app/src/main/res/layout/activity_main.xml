@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <Button
+        android:id="@+id/buttonLogin"
+        android:layout_width="300px"
+        android:layout_height="130px"
+        android:text="@string/login"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/buttonRegister"
+        android:layout_width="300px"
+        android:layout_height="130px"
+        android:text="@string/register"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:layout_below="@id/buttonLogin"
+        android:layout_marginTop="50px"
+        android:layout_centerInParent="true"/>
+
+
+</RelativeLayout>

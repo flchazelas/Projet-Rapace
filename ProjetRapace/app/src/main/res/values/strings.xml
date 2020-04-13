@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Project Rapace</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="validate">Validate</string>
+    <string name="pseudo">Pseudo</string>
+    <string name="register">Register</string>
+    <string name="connection_failed">Connection Failed</string>
+    <string name="password_or_username_wrong">Your Username or Password is wrong !\nPlease try to login again !</string>
+    <string name="return_">Return</string>
+</resources>
