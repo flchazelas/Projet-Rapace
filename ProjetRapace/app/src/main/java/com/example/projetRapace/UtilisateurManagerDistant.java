@@ -1,6 +1,7 @@
 package com.example.projetRapace;
 
 import android.content.Context;
+import android.os.Debug;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -12,7 +13,7 @@ public class UtilisateurManagerDistant implements AsyncReponse{
     private Context context;
 
     //constante
-    private static final String SERVER_ADDR = "http://192.168.1.16/utilisateur/serveur_utilisateur.php";
+    private static final String SERVER_ADDR = "http://51.178.182.46/serveur_utilisateur.php";
 
     public UtilisateurManagerDistant(Context c){
         super();
@@ -42,8 +43,8 @@ public class UtilisateurManagerDistant implements AsyncReponse{
                 Log.d("connexion", "---------------"+msg[1]);
                 try {
                     JSONObject info = new JSONObject(msg[1]);
-                    String pseudo = info.getString("pseudo");
-                    String mdp = info.getString("mdp");
+                    String pseudo = info.getString("username");
+                    String mdp = info.getString("password");
                     Utilisateur utilisateur = new Utilisateur(pseudo, mdp);
                     Log.d("utilisateur", "---------------"+utilisateur.getPseudo_utilisateur());
                     ((MainConnexion) context).verifConnexion(utilisateur);
@@ -56,8 +57,8 @@ public class UtilisateurManagerDistant implements AsyncReponse{
                 Log.d("utilisateurs", "---------------" + msg[1]);
                 try {
                     JSONObject info = new JSONObject(msg[1]);
-                    String pseudo = info.getString("pseudo");
-                    String mdp = info.getString("mdp");
+                    String pseudo = info.getString("username");
+                    String mdp = info.getString("password");
                     Utilisateur utilisateur = new Utilisateur(pseudo, mdp);
                     ((MainEnregistrement) context).retourneUtilisateur(utilisateur);
                 } catch (JSONException e) {

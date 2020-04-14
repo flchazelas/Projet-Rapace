@@ -71,6 +71,6 @@ public class AccesHTTP extends AsyncTask<String, Integer, Long> {
 
     @Override
     protected void onPostExecute(Long result){
-        delegate.processFinish(retour.toString());
+        delegate.processFinish(retour);
     }
 }
