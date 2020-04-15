@@ -101,10 +101,12 @@ public class MainConnexion extends AppCompatActivity {
     }
 
     public void verifConnexion(Utilisateur u){
-        intent.putExtra("PSEUDO", u.getPseudo_utilisateur());
-        intent.putExtra("MDP", u.getMdp_utilisateur());
-
-        startActivityForResult(intent, CODE_ACTIVITY);
+//        intent.putExtra("PSEUDO", u.getPseudo_utilisateur());
+//        intent.putExtra("MDP", u.getMdp_utilisateur());
+//
+//        startActivityForResult(intent, CODE_ACTIVITY);
+        Intent intentVueCamera = new Intent(this, CameraListView.class);
+        startActivity(intentVueCamera);
     }
 
     public void echecConnexion(){
