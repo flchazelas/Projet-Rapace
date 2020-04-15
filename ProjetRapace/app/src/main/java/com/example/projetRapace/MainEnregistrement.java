@@ -30,44 +30,6 @@ public class MainEnregistrement extends AppCompatActivity {
         editMdp = (EditText)findViewById(R.id.password);
         buttonValider = (Button)findViewById(R.id.buttonValidate);
 
-        /*
-        UtilisateurManager m = new UtilisateurManager(this); // gestionnaire de la table "utilisateur"
-        m.open(); // ouverture de la table en lecture/écriture
-
-
-        // insertion. L'id sera attribué automatiquement par incrément
-        m.addUtilisateur(new Utilisateur(0,"maya"));
-
-    /*
-        // modification du nom de l'utilisateur dont l'id est 1
-        Utilisateur a=m.getUtilisateur(1);
-        a.setNom_utilisateur("toto");
-        m.modUtilisateur(a);
-
-        // suppression
-        m.supUtilisateur(a);
-        */
-
-        /*
-        // Listing des enregistrements de la table
-        Cursor c = m.getUtilisateurs();
-        if (c.moveToFirst())
-        {
-            do {
-                Log.d("test",
-                        c.getInt(c.getColumnIndex(UtilisateurManager.KEY_ID_UTILISATEUR)) + "," +
-                                c.getString(c.getColumnIndex(UtilisateurManager.KEY_NOM_UTILISATEUR))
-                );
-            }
-            while (c.moveToNext());
-        }
-        c.close(); // fermeture du curseur
-
-        // fermeture du gestionnaire
-        m.close();
-
-         */
-
         buttonValider.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
