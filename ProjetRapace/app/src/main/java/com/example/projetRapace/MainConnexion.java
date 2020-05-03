@@ -1,11 +1,16 @@
 package com.example.projetRapace;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -29,7 +34,8 @@ public class MainConnexion extends AppCompatActivity {
     private TextView textMdp;
     private EditText editPseudo;
     private EditText editMdp;
-    private Button buttonValider;
+    private Button buttonConnexion;
+    private Button buttonEnregistrement;
     private Intent intent;
 
     @Override
@@ -41,13 +47,12 @@ public class MainConnexion extends AppCompatActivity {
         //textMdp = (TextView)findViewById(R.id.textRenduMdp);
         editPseudo = (EditText)findViewById(R.id.pseudo);
         editMdp = (EditText)findViewById(R.id.password);
-        buttonValider = (Button)findViewById(R.id.buttonValidate);
+        buttonConnexion = (Button)findViewById(R.id.buttonConnexion);
+        buttonEnregistrement = (Button)findViewById(R.id.buttonRegister);
 
-        buttonValider.setOnClickListener(new View.OnClickListener() {
+        buttonConnexion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent = new Intent(MainConnexion.this, MainCompte.class);
-
 
                 UtilisateurManagerDistant m = new UtilisateurManagerDistant(MainConnexion.this);
                 //m.envoi("utilisateurs", new JSONArray());
@@ -60,13 +65,18 @@ public class MainConnexion extends AppCompatActivity {
                 //startActivity(intent);
             }
         });
+
+        buttonEnregistrement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent = new Intent(MainConnexion.this, MainEnregistrement.class);
+
+                startActivity(intent);
+            }
+        });
     }
 
     public void verifConnexion(Utilisateur u){
-//        intent.putExtra("PSEUDO", u.getPseudo_utilisateur());
-//        intent.putExtra("MDP", u.getMdp_utilisateur());
-//
-//        startActivityForResult(intent, CODE_ACTIVITY);
         Intent intentVueCamera = new Intent(this, CameraListView.class);
         startActivity(intentVueCamera);
     }
@@ -92,6 +102,26 @@ public class MainConnexion extends AppCompatActivity {
             //textPseudo.setText(u.getPseudo_utilisateur());
             Log.d("ID :", String.valueOf(u.getId_utilisateur()));
             //textMdp.setText(u.getMdp_utilisateur());
+        }
+    }
+
+
+
+    public void checkPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!(checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+                ActivityCompat.requestPermissions(this, new String[]{
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,}, 1);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (!(requestCode == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
+            checkPermission();
         }
     }
 }

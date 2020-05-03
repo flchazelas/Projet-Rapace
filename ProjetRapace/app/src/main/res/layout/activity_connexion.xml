@@ -4,65 +4,98 @@
     android:layout_height="fill_parent">
 
     <TextView
-        android:id="@+id/textPseudo"
-        android:layout_width="210px"
-        android:layout_height="102px"
-        android:text="@string/pseudo"
-        android:textSize="12sp"
-        android:gravity="center"/>
-    <EditText
-        android:id="@+id/pseudo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/pseudo"
-        android:inputType="text"
-        android:layout_toRightOf="@id/textPseudo"
-        android:layout_alignParentRight="true"/>
-
-    <TextView
-        android:id="@+id/textPassword"
-        android:layout_width="210px"
-        android:layout_height="102px"
-        android:layout_below="@id/pseudo"
+        android:id="@+id/titre"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
         android:gravity="center"
-        android:text="@string/password"
-        android:textSize="12sp" />
+        android:text="S'identifier"
+        android:textColor="#F8000000"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        android:layout_toRightOf="@id/textPassword"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/pseudo"/>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="400dp"
+        android:layout_marginTop="100dp">
 
-    <TextView
-        android:id="@+id/textRenduPseudo"
-        android:layout_width="210px"
-        android:layout_height="102px"
-        android:layout_below="@id/password"
-        android:gravity="center"
-        android:textSize="12sp" />
+        <TextView
+            android:id="@+id/textPseudo"
+            android:layout_width="210px"
+            android:layout_height="102px"
+            android:text="@string/pseudo"
+            android:textSize="12sp"
+            android:gravity="center"/>
+        <EditText
+            android:id="@+id/pseudo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/pseudo"
+            android:inputType="text"
+            android:layout_toRightOf="@id/textPseudo"
+            android:layout_alignParentRight="true"/>
 
-    <TextView
-        android:id="@+id/textRenduMdp"
-        android:layout_width="210px"
-        android:layout_height="102px"
-        android:layout_below="@id/textRenduPseudo"
-        android:gravity="center"
-        android:textSize="12sp" />
+        <TextView
+            android:id="@+id/textPassword"
+            android:layout_width="210px"
+            android:layout_height="102px"
+            android:layout_below="@id/pseudo"
+            android:gravity="center"
+            android:text="@string/password"
+            android:textSize="12sp" />
 
-    <Button
-        android:id="@+id/buttonValidate"
-        android:layout_width="220px"
-        android:layout_height="110px"
-        android:text="@string/validate"
-        android:textSize="12sp"
-        android:gravity="center"
-        android:layout_below="@id/textRenduMdp"
-        android:layout_centerInParent="true"/>
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:layout_toRightOf="@id/textPassword"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/pseudo"/>
+
+        <Button
+            android:id="@+id/buttonConnexion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_below="@id/password"
+            android:layout_centerInParent="true"/>
+
+        <TextView
+            android:id="@+id/compte"
+            android:layout_width="700px"
+            android:layout_height="102px"
+            android:layout_below="@id/buttonConnexion"
+            android:gravity="center"
+            android:text="@string/no_account"
+            android:layout_marginTop="50dp"
+            android:layout_centerInParent="true"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/buttonRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_below="@id/compte"
+            android:layout_centerInParent="true"/>
+
+        <Button
+            android:id="@+id/test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_below="@id/buttonRegister"
+            android:layout_marginTop="50dp"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
 
 
 </RelativeLayout>

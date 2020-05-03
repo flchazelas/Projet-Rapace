@@ -18,10 +18,11 @@
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
         <activity android:name=".CameraView"></activity>
         <activity android:name=".CameraListView"></activity>
+        <activity android:name=".MainCardView"></activity>
         <activity android:name=".MainCompte" />
-        <activity android:name=".MainConnexion" />
+        <activity android:name=".MainActivity" />
         <activity android:name=".MainEnregistrement" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainConnexion">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

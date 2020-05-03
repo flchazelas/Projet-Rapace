@@ -7,6 +7,10 @@
     <string name="register">S\'enregistrer</string>
     <string name="connection_failed">Echec de connexion</string>
     <string name="password_or_username_wrong">Votre Pseudo ou Mot de Passe est erroné ! Veuillez vous reconnecter !</string>
-    <string name="try_login">Veuillez retentez de vous connecter !</string>
     <string name="return_">Retour</string>
+    <string name="change">Modification</string>
+    <string name="no_account">Pas de compte ? Venez en créer un !</string>
+    <string name="password_confirmation">Confirmation du mot de passe</string>
+    <string name="register_failed">Echec d\'enregistrement</string>
+    <string name="username_already_used">Votre Pseudo est déjà utilisé ! Veuillez vous ré-enregistrer !</string>
 </resources>

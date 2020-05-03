@@ -6,6 +6,11 @@
     <string name="pseudo">Pseudo</string>
     <string name="register">Register</string>
     <string name="connection_failed">Connection Failed</string>
-    <string name="password_or_username_wrong">Your Username or Password is wrong !\nPlease try to login again !</string>
+    <string name="password_or_username_wrong">Your Username or Password is wrong ! Please try to login again !</string>
     <string name="return_">Return</string>
+    <string name="change">Change</string>
+    <string name="no_account">No account? Come create one!</string>
+    <string name="password_confirmation">Password confirmation</string>
+    <string name="register_failed">Register Failed</string>
+    <string name="username_already_used">Your Username is already used ! Please try to register again !</string>
 </resources>

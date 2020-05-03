@@ -38,6 +38,13 @@ public class UtilisateurManagerDistant implements AsyncReponse{
             if(msg.length > 1){
                 if(msg[0].equals("enregistrement")){
                     Log.d("enregistrement", "---------------"+msg[1]);
+                    if(!msg[1].equals("Erreur connexion !")) {
+                        ((MainEnregistrement) context).verifConnexion();
+                    }
+                    else{
+                        Log.d("Erreur", "Erreur de connexion!");
+                        ((MainEnregistrement) context).echecConnexion();
+                    }
                 }
                 else if(msg[0].equals("recherche")){
                     Log.d("connexion", "---------------"+msg[1]);
@@ -49,7 +56,7 @@ public class UtilisateurManagerDistant implements AsyncReponse{
                         Log.d("utilisateur", "---------------"+utilisateur.getPseudo_utilisateur());
                         ((MainConnexion) context).verifConnexion(utilisateur);
                     } catch (JSONException e) {
-                        Log.d("Erreur", "Conversion JSON impossible!" + e.toString());
+                        Log.d("Erreur", "Erreur de conversion JSON!" + e.toString());
                         ((MainConnexion) context).echecConnexion();
                     }
                 }
@@ -62,7 +69,7 @@ public class UtilisateurManagerDistant implements AsyncReponse{
                         Utilisateur utilisateur = new Utilisateur(pseudo, mdp);
                         ((MainEnregistrement) context).retourneUtilisateur(utilisateur);
                     } catch (JSONException e) {
-                        Log.d("Erreur", "Conversion JSON impossible!" + e.toString());
+                        Log.d("Erreur", "Erreur de conversion JSON!" + e.toString());
                     }
                 }
                 else if(msg[0].equals("Erreur !")){
