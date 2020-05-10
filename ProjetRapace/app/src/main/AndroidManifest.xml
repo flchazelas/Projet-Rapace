@@ -18,8 +18,8 @@
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
         <activity android:name=".CameraView"></activity>
         <activity android:name=".CameraListView"></activity>
-        <activity android:name=".MainCardView"></activity>
-        <activity android:name=".MainCompte" />
+        <activity android:name=".MainCardViewLocal"></activity>
+        <activity android:name=".MainCardViewCamera"></activity>
         <activity android:name=".MainActivity" />
         <activity android:name=".MainEnregistrement" />
         <activity android:name=".MainConnexion">
@@ -28,6 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".RapaceService"></service>
 
         <uses-library
             android:name="org.apache.http.legacy"

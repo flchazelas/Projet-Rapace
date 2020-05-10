@@ -6,13 +6,11 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,11 +18,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainConnexion extends AppCompatActivity {
 
@@ -37,11 +32,20 @@ public class MainConnexion extends AppCompatActivity {
     private Button buttonConnexion;
     private Button buttonEnregistrement;
     private Intent intent;
+    private SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
+
+        // Service de vérification de connexion
+        intent = new Intent(MainConnexion.this, RapaceService.class);
+        startService(intent);
+
+        // Session Manager
+        session = new SessionManager(getApplicationContext());
+        //Toast.makeText(getApplicationContext(), "User Login Status: " + session.isLoggedIn(), Toast.LENGTH_LONG).show();
 
         //textPseudo = (TextView)findViewById(R.id.textRenduPseudo);
         //textMdp = (TextView)findViewById(R.id.textRenduMdp);
@@ -70,14 +74,18 @@ public class MainConnexion extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 intent = new Intent(MainConnexion.this, MainEnregistrement.class);
-
                 startActivity(intent);
             }
         });
     }
 
     public void verifConnexion(Utilisateur u){
-        Intent intentVueCamera = new Intent(this, CameraListView.class);
+        Date now = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+        String dateFormatee = format.format(now);
+        session.creationLoginSession(u.getPseudo_utilisateur(), dateFormatee);
+
+        Intent intentVueCamera = new Intent(this, MainCardViewLocal.class);
         startActivity(intentVueCamera);
     }
 
@@ -95,14 +103,6 @@ public class MainConnexion extends AppCompatActivity {
         });
 
         alertDialog.show();
-    }
-
-    public void retourneUtilisateur(Utilisateur u){
-        if(u.getId_utilisateur() != -1){
-            //textPseudo.setText(u.getPseudo_utilisateur());
-            Log.d("ID :", String.valueOf(u.getId_utilisateur()));
-            //textMdp.setText(u.getMdp_utilisateur());
-        }
     }
 
 
@@ -123,5 +123,11 @@ public class MainConnexion extends AppCompatActivity {
         if (!(requestCode == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
             checkPermission();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        session.deconnexionSession();
     }
 }

@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainEnregistrement extends AppCompatActivity {
 
@@ -24,11 +24,17 @@ public class MainEnregistrement extends AppCompatActivity {
     private EditText editMdp;
     private EditText editMdpConfirm;
     private Button buttonValider;
+    private SessionManager session;
+    private Utilisateur utilisateur;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enregistrement);
+
+        // Session Manager
+        session = new SessionManager(getApplicationContext());
+        //Toast.makeText(getApplicationContext(), "User Login Status: " + session.isLoggedIn(), Toast.LENGTH_LONG).show();
 
         //textPseudo = (TextView)findViewById(R.id.textRenduPseudo);
         //textMdp = (TextView)findViewById(R.id.textRenduMdp);
@@ -63,15 +69,20 @@ public class MainEnregistrement extends AppCompatActivity {
                     alertDialog.show();
                 }
                 else{
-                    Utilisateur u = new Utilisateur(pseudo, mdp);
-                    m.envoi("ajout", u.convertionJSONArray());
+                    utilisateur = new Utilisateur(pseudo, mdp);
+                    m.envoi("ajout", utilisateur.convertionJSONArray());
                 }
             }
         });
     }
 
     public void verifConnexion(){
-        Intent intentVueCamera = new Intent(this, CameraListView.class);
+        Date now = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+        String dateFormatee = format.format(now);
+        session.creationLoginSession(utilisateur.getPseudo_utilisateur(), dateFormatee);
+
+        Intent intentVueCamera = new Intent(this, MainCardViewLocal.class);
         startActivity(intentVueCamera);
     }
 
@@ -89,14 +100,5 @@ public class MainEnregistrement extends AppCompatActivity {
         });
 
         alertDialog.show();
-    }
-
-
-    public void retourneUtilisateur(Utilisateur u){
-        if(u.getId_utilisateur() != -1){
-            //textPseudo.setText(u.getPseudo_utilisateur());
-            Log.d("ID :", String.valueOf(u.getId_utilisateur()));
-            //textMdp.setText(u.getMdp_utilisateur());
-        }
     }
 }
