@@ -1,6 +1,6 @@
 package com.example.projetRapace;
 
-public class Local {
+public class Local{
     private String nom;
     private String image;
 
@@ -9,6 +9,9 @@ public class Local {
         this.image = image;
     }
 
+    /**
+     * Getter et Setter du nom et de l'image d'un Local
+     * */
     public String getNom() {
         return nom;
     }

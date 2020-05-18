@@ -13,4 +13,5 @@
     <string name="password_confirmation">Password confirmation</string>
     <string name="register_failed">Register Failed</string>
     <string name="username_already_used">Your Username is already used ! Please try to register again !</string>
+    <string name="logout">Logout</string>
 </resources>

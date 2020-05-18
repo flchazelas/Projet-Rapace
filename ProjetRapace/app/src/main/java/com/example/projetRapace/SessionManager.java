@@ -31,6 +31,9 @@ public class SessionManager {
     // Pseudo Utilisateur
     public static final String KEY_PSEUDO = "pseudo";
 
+    // DateAccess Utilisateur
+    public static final String KEY_DATE = "date";
+
     // Constructeur
     public SessionManager(Context context){
         this._context = context;
@@ -41,12 +44,15 @@ public class SessionManager {
     /**
      * Crée la Session
      * */
-    public void creationLoginSession(String name, String email){
+    public void creationLoginSession(String pseudo, String dateNow){
         // Mais le boolean IS_Logged à true
         editor.putBoolean(IS_LOGGED, true);
 
         // Stock le pseudo
-        editor.putString(KEY_PSEUDO, name);
+        editor.putString(KEY_PSEUDO, pseudo);
+
+        // Stock la date
+        editor.putString(KEY_DATE, dateNow);
 
         // prend en compte les changements
         editor.commit();
@@ -73,8 +79,6 @@ public class SessionManager {
         }
     }
 
-
-
     /**
      * Retourne les données de Session
      * */
@@ -83,15 +87,17 @@ public class SessionManager {
 
         utilisateur.put(KEY_PSEUDO, pref.getString(KEY_PSEUDO, null));
 
+        utilisateur.put(KEY_DATE, pref.getString(KEY_DATE, null));
+
         return utilisateur;
     }
 
     /**
-     * Nettoie la Session et redirige vers MainConnexion
+     * Change la valeur isLogged à false et redirige vers MainConnexion
      * */
-    public void DeconnexionSession(){
-        // Nettoie toutes les Shared Pref
-        editor.clear();
+    public void deconnexionSession(){
+
+        editor.putBoolean(IS_LOGGED, false);
         editor.commit();
 
         // Redirection vers MainConnexion
@@ -104,6 +110,27 @@ public class SessionManager {
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         _context.startActivity(i);
+    }
+
+    /**
+     * Modifie les données en Session
+     * */
+    public void setDonneesSession(String date){
+        // Stock la date
+        editor.putString(KEY_DATE, date);
+
+        // prend en compte les changements
+        editor.commit();
+    }
+
+    /**
+     * Nettoie la Session
+     * */
+    public void clearSharedPref(){
+
+        // Nettoie toutes les Shared Pref
+        editor.clear();
+        editor.commit();
     }
 
     /**

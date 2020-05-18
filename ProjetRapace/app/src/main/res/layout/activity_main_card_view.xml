@@ -32,16 +32,34 @@
             android:scaleType="centerCrop"
             tools:src="@drawable/camera_surveillance" />
 
-        <TextView
-            android:id="@+id/text"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:selectableItemBackground"
-            android:padding="20dp"
-            tools:text="Paris"
-            android:fontFamily="sans-serif"
-            android:textColor="#333"
-            android:textSize="18sp" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:selectableItemBackground"
+                android:padding="20dp"
+                tools:text="Paris"
+                android:fontFamily="sans-serif"
+                android:textColor="#333"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"/>
+
+            <ImageButton
+                android:id="@+id/buttonModif"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="10dp"
+                android:src="@drawable/engrenage"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

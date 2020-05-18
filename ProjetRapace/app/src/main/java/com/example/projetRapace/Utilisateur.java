@@ -9,12 +9,17 @@ public class Utilisateur {
     private String pseudo_utilisateur;
     private String mdp_utilisateur;
 
-    // Constructeur
+    /**
+     * Constructeur Utilisateur
+     */
     public Utilisateur(String pseudo, String mdp) {
         this.pseudo_utilisateur=pseudo;
         this.mdp_utilisateur=mdp;
     }
 
+    /**
+     * Getter et Setter du pseudo, mdp et id d'un Utilisateur
+     */
     public int getId_utilisateur() {
         return id_utilisateur;
     }
@@ -37,7 +42,7 @@ public class Utilisateur {
 
     /**
      * conversion de l'utilisateur au format JSONArray
-     * @return
+     * @return JSONArray
      */
     public JSONArray convertionJSONArray(){
         ArrayList list = new ArrayList();
