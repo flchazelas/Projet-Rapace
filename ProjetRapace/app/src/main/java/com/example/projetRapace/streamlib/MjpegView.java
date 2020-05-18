@@ -19,6 +19,8 @@ import android.util.MutableBoolean;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.example.projetRapace.Camera.Camera;
+
 public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
     public final static int POSITION_UPPER_LEFT  = 9;
     public final static int POSITION_UPPER_RIGHT = 3;
@@ -239,9 +241,9 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void stopRecord() {
+    public void stopRecord(int idCam) {
         if(mIsRecording.value) {
-            mIsRecording.value = !recorder.stopRecording();
+            mIsRecording.value = !recorder.stopRecording(idCam);
             Log.d("CREATION", "RECORD STOP");
         }
     }
@@ -251,8 +253,8 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    public void screenshot(String filename){
-        recorder.screenshot(filename,bm);
+    public void screenshot(int idCam, String filename){
+        recorder.screenshot(idCam,filename,bm);
     }
 
     public Bitmap getBitmap(){ return bm; }

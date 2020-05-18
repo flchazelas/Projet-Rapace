@@ -95,11 +95,9 @@ public class CameraDBManager implements AsyncReponse {
 
         accesHTTP.addParam("operation", CAMERA_DB_REMOVE);Map<String,Object> data = new HashMap<>();
         data.put("id", c.getId());
-        data.put("name", c.getName());
-        data.put("ip", c.getIp());
         accesHTTP.addParam("donnees", gson.toJson(data));
         Log.d("CameraDBManager", "(removeCamera) -> "+ c.toJSON().toString());
 
-        //accesHTTP.execute(SERVER_ADDR);
+        accesHTTP.execute(SERVER_ADDR);
     }
 }

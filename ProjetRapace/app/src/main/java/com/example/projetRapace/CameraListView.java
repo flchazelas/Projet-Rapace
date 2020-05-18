@@ -62,13 +62,13 @@ public class CameraListView extends AppCompatActivity {
         Button button  = new Button(this);
         button.setText(c.getName());
 
-        final String ipToStream = c.getIp();
+        final int idCamera = c.getId();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, CameraView.class);
+                Intent intent = new Intent(context, VueCamera.class);
 
-                intent.putExtra("ip", ipToStream);
+                intent.putExtra("id", idCamera);
                 startActivity(intent);
             }
         });

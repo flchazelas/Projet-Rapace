@@ -36,6 +36,8 @@ public class MjpegInputStream extends DataInputStream {
     public static MjpegInputStream read(String string_url) {
         HttpResponse res;
         try {
+
+            Log.d("CREATION", string_url);
             URL url = new URL(string_url);
             HttpURLConnection httpclient = (HttpURLConnection) url.openConnection();
             httpclient.connect();

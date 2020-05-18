@@ -44,10 +44,16 @@ public class Camera {
         this.ip = ip;
     }
 
-    public static Camera cameraFromJSON(JSONArray jsonArray){
-        Camera c = new Camera("oui","oui");
+    public static Camera cameraFromJSON(JSONObject jsonObject){
+        Camera c;
+        try {
+            c = new Camera(jsonObject.getInt("id"),jsonObject.getString("name"),jsonObject.getString("ip"));
+            return c;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        return c;
+        return null;
     }
 
     public static ArrayList<Camera> camerasFromJSON(JSONArray jsonArray){

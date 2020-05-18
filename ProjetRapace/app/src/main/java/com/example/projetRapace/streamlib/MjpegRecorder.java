@@ -1,13 +1,27 @@
 package com.example.projetRapace.streamlib;
 
+import android.Manifest;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
+
+import com.example.projetRapace.Camera.Camera;
+import com.example.projetRapace.ImageVideo.Image;
+import com.example.projetRapace.ImageVideo.ImageDBManager;
+import com.example.projetRapace.ImageVideo.Video;
+import com.example.projetRapace.ImageVideo.VideoDBManager;
+
 import org.jcodec.api.android.AndroidSequenceEncoder;
 import org.jcodec.common.io.FileChannelWrapper;
 import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.model.Rational;
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -30,6 +44,9 @@ public class MjpegRecorder {
 
     long recordStart;
     long recordEnd;
+
+    public static boolean done = false;
+    public static boolean result = false;
 
     private class RecordRun implements Runnable {
         public void run() {
@@ -91,7 +108,7 @@ public class MjpegRecorder {
         return true;
     }
 
-    public boolean stopRecording(){
+    public boolean stopRecording(int idCam){
         writeLock.lock();
         if(!isRecordOn){
             Log.v("RECORD","Aucun record en cours -> impossible d'arreter de record");
@@ -104,7 +121,7 @@ public class MjpegRecorder {
             recordEnd = System.currentTimeMillis();
 
             Log.v("RECORD", "Recording finished");
-            saveRecord(bitmaps, recordEnd - recordStart);
+            saveRecord(idCam, bitmaps, recordEnd - recordStart);
             writeLock.unlock();
             return true;
         } catch (Exception e) {
@@ -115,7 +132,7 @@ public class MjpegRecorder {
         return false;
     }
 
-    public boolean saveRecord(ArrayList<Bitmap> array, long timeLenght){
+    public boolean saveRecord(int idCam, ArrayList<Bitmap> array, long timeLenght){
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File mjpegFile;
         try {
@@ -128,6 +145,30 @@ public class MjpegRecorder {
                 encoder.encodeImage(b);
             encoder.finish();
             NIOUtils.closeQuietly(out);
+
+            ServerUploader.uploadFile(mjpegFile.getPath());
+
+            VideoDBManager.VideoDBCallbackInterface callback = new VideoDBManager.VideoDBCallbackInterface() {
+                @Override
+                public void onQueryFinished(String operation, String output) {
+                    Log.d("saveRecord", "(onQueryFinished) -> "+ operation);
+                    if(operation.equals(VideoDBManager.VIDEO_DB_ADDFORCAMERA)){
+                        try {
+                            Log.d("saveRecord", "(retour VIDEO_DB_ADD) -> "+ output);
+                            if(output == "INSERT_SUCCESSFUL")
+                                result = true;
+                            else
+                                result = false;
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            Video v = new Video("Data/videos/"+mjpegFile.getName());
+            VideoDBManager.addVideoForCamera(callback,idCam, v);
+
             return true;
         } catch (Exception e) {
             Log.v("RECORD",e.getMessage());
@@ -136,7 +177,7 @@ public class MjpegRecorder {
         }
     }
 
-    public boolean screenshot(String fileName, Bitmap b){
+    public boolean screenshot(int idCam, String fileName, Bitmap b){
         FileOutputStream fileOutputStream = null;
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
@@ -155,6 +196,35 @@ public class MjpegRecorder {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        ServerUploader.uploadFile(file.getPath());
+
+        ImageDBManager.ImageDBCallbackInterface callback = new ImageDBManager.ImageDBCallbackInterface() {
+            @Override
+            public void onQueryFinished(String operation, String output) {
+                Log.d("screenshot", "(onQueryFinished) -> "+ operation);
+                if(operation.equals(ImageDBManager.IMAGE_DB_ADDFORCAMERA)){
+                    try {
+                        Log.d("screenshot", "(retour IMAGE_DB_ADD_FOR_CAMERA) -> "+ output);
+                        if(output == "INSERT_SUCCESSFUL")
+                            result = true; //gestion success
+                        else
+                            result = false; //gestion error
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        Image i = new Image("Data/images/"+file.getName());
+        ImageDBManager.addImageForCamera(callback,idCam,i);
+
         return true;
+    }
+
+    public final void setBool(boolean bool, boolean value){
+        bool = value;
     }
 }

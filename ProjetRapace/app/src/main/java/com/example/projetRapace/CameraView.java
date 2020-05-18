@@ -1,9 +1,16 @@
 package com.example.projetRapace;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,89 +19,113 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.example.projetRapace.Camera.Camera;
+import com.example.projetRapace.Camera.CameraDBManager;
 import com.example.projetRapace.streamlib.MjpegView;
 import com.example.projetRapace.streamlib.VideoLoaderAsync;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class CameraView extends AppCompatActivity {
     private MjpegView mv;
     private static final int MENU_QUIT = 1;
-
-    private boolean isPlaying;
-    private boolean isRecording;
-
-    /* Creates the menu items */
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_QUIT, 0, "Quit");
-        return true;
-    }
-
-    /* Handles item selections */
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case MENU_QUIT:
-                finish();
-                return true;
-        }
-        return false;
-    }
 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         Intent intent = getIntent();
 
         if(intent != null) {
-            String URL = intent.getStringExtra("ip");
+            final int id = intent.getIntExtra("id", -1);
+            final String ip = intent.getStringExtra("ip");
+            if (id != -1) {
+                requestWindowFeature(Window.FEATURE_NO_TITLE);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+                mv = new MjpegView(this);
+                mv.setZOrderOnTop(false);
+                setContentView(R.layout.activity_camera_view);
 
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-            mv = new MjpegView(this);
-            mv.setZOrderOnTop(false);
-            setContentView(R.layout.activity_camera_view);
+                RelativeLayout rl = (RelativeLayout) findViewById(R.id.ControlsHolder);
+                ((FrameLayout) findViewById(R.id.FrameHolder)).removeAllViews();
+                ((FrameLayout) findViewById(R.id.FrameHolder)).addView(mv);
+                ((FrameLayout) findViewById(R.id.FrameHolder)).addView(rl);
 
-            RelativeLayout rl = (RelativeLayout) findViewById(R.id.ControlsHolder);
-            ((FrameLayout) findViewById(R.id.FrameHolder)).removeAllViews();
-            ((FrameLayout) findViewById(R.id.FrameHolder)).addView(mv);
-            ((FrameLayout) findViewById(R.id.FrameHolder)).addView(rl);
+                final Activity context = this;
 
-            ((Button) findViewById(R.id.screenshotControl)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mv.screenshot("test");
-                }
-            });
+                ((Button) findViewById(R.id.screenshotControl)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                        }
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                        }
 
-            ((Button) findViewById(R.id.recordControl)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (!mv.isRecording()) {
-                        mv.startRecord("test");
-                        ((Button) findViewById(R.id.recordControl)).setText("Stop Recording");
-                    } else {
-                        mv.stopRecord();
-                        ((Button) findViewById(R.id.recordControl)).setText("Start Recording");
+                        //Création du nom selon la date et l'heure
+                        Calendar ca = Calendar.getInstance();
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");
+                        String filename = df.format(ca.getTime());
+
+                        mv.screenshot(id,filename);
                     }
-                }
-            });
-            ((Button) findViewById(R.id.exitControl)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    finish();
-                }
-            });
+                });
 
-            Runnable r = new VideoLoaderAsync(mv, URL);
-            new Thread(r).start();
+                ((Button) findViewById(R.id.recordControl)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!mv.isRecording()) {
+                            //Création du nom selon la date et l'heure
+                            Calendar ca = Calendar.getInstance();
+                            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");
+                            String filename = df.format(ca.getTime());
+
+                            mv.startRecord(filename);
+                            ((Button) findViewById(R.id.recordControl)).setText("Stop Recording");
+                        } else {
+                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                            }
+                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                            }
+                            mv.stopRecord(id);
+                            ((Button) findViewById(R.id.recordControl)).setText("Start Recording");
+                        }
+                    }
+                });
+                ((Button) findViewById(R.id.exitControl)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(context, VueCamera.class);
+
+                        intent.putExtra("id", id);
+                        startActivity(intent);
+                    }
+                });
+
+                Runnable r = new VideoLoaderAsync(mv, ip);
+                new Thread(r).start();
+
+                mv.startPlayback();
+            }
         }
     }
 
     public void onPause() {
         super.onPause();
-        mv.stopPlayback();
+        if(mv != null)
+            mv.stopPlayback();
     }
 
     public void onResume() {
         super.onResume();
-        mv.startPlayback();
+        if(mv != null)
+            mv.startPlayback();
     }
 }
