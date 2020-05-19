@@ -15,21 +15,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
+        <activity android:name=".VueLocal"></activity>
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <activity android:name=".ImageViewActivity"/>
+        <activity android:name=".ImageViewActivity" />
         <activity android:name=".VideoView" />
         <activity android:name=".CameraView" />
         <activity android:name=".CameraListView" />
         <activity android:name=".MainCardView" />
         <activity android:name=".MainCompte" />
         <activity android:name=".VueCamera" />
-        <activity android:name=".MainCardViewLocal"></activity>
-        <activity android:name=".MainCardViewCamera"></activity>
+        <activity android:name=".MainCardViewLocal" />
+        <activity android:name=".MainCardViewCamera" />
         <activity android:name=".MainActivity" />
         <activity android:name=".MainEnregistrement" />
         <activity android:name=".MainConnexion">
@@ -39,7 +39,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".RapaceService"></service>
+
+        <service android:name=".RapaceService" />
 
         <uses-library
             android:name="org.apache.http.legacy"

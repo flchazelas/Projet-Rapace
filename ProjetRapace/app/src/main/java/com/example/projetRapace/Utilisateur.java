@@ -9,9 +9,16 @@ public class Utilisateur {
     private String pseudo_utilisateur;
     private String mdp_utilisateur;
 
+    private boolean autorisation = false;
+
     /**
      * Constructeur Utilisateur
      */
+    public Utilisateur(int id,String pseudo, String mdp) {
+        this.id_utilisateur=id;
+        this.pseudo_utilisateur=pseudo;
+        this.mdp_utilisateur=mdp;
+    }
     public Utilisateur(String pseudo, String mdp) {
         this.pseudo_utilisateur=pseudo;
         this.mdp_utilisateur=mdp;
@@ -49,5 +56,13 @@ public class Utilisateur {
         list.add(pseudo_utilisateur);
         list.add(mdp_utilisateur);
         return new JSONArray(list);
+    }
+
+    public boolean isAutorisation() {
+        return autorisation;
+    }
+
+    public void setAutorisation(boolean autorisation) {
+        this.autorisation = autorisation;
     }
 }

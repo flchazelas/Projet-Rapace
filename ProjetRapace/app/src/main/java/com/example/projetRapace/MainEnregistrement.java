@@ -80,7 +80,7 @@ public class MainEnregistrement extends AppCompatActivity {
         Date now = new Date();
         SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         String dateFormatee = format.format(now);
-        session.creationLoginSession(utilisateur.getPseudo_utilisateur(), dateFormatee);
+        session.creationLoginSession(utilisateur.getPseudo_utilisateur(), dateFormatee,utilisateur.getId_utilisateur());
 
         Intent intentVueCamera = new Intent(this, MainCardViewLocal.class);
         startActivity(intentVueCamera);

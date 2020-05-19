@@ -51,80 +51,13 @@
                 android:background="#C8C5C5">
 
                 <LinearLayout
+                    android:id="@+id/userContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#C6C6C6"
                     android:orientation="vertical">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="#FFFFFF"
-                        android:orientation="horizontal"
-                        android:weightSum="1">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:paddingRight="5dp"
-                            android:text="jferreira"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginRight="15dp"
-                            android:paddingRight="5dp"
-                            android:text="autorisé : "
-                            android:textStyle="italic" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentRight="true"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitXY"
-                            app:srcCompat="@android:drawable/checkbox_on_background" />
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="5dp"
-                        android:background="#FFFFFF"
-                        android:orientation="horizontal"
-                        android:weightSum="1">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:paddingRight="5dp"
-                            android:text="fchazelas"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginRight="15dp"
-                            android:paddingRight="5dp"
-                            android:text="autorisé : "
-                            android:textStyle="italic" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_alignParentRight="true"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitXY"
-                            app:srcCompat="@android:drawable/checkbox_off_background" />
-
-                    </RelativeLayout>
                 </LinearLayout>
 
             </ScrollView>
@@ -140,7 +73,14 @@
             android:gravity="center">
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/boutonSupprimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#ED8A8A"
+                android:text="Supprimer le Local" />
+
+            <Button
+                android:id="@+id/buttonRetour"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Retour a la liste des locaux"

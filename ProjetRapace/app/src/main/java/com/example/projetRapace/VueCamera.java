@@ -9,6 +9,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -24,6 +26,7 @@ import com.example.projetRapace.ImageVideo.Image;
 import com.example.projetRapace.ImageVideo.ImageDBManager;
 import com.example.projetRapace.ImageVideo.Video;
 import com.example.projetRapace.ImageVideo.VideoDBManager;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,10 +38,39 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class VueCamera extends AppCompatActivity {
+    private static final int MENU_QUIT = 1;
+    private SessionManager session;
+
+    /**
+     * Création d'un menu d'Items dans la Barre du Haut de l'application
+     * Ajout de l'option de déconnexion
+     * */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_QUIT, 0, R.string.logout);
+        return true;
+    }
+
+    /**
+     * Gère le menu d'Items
+     * Pour l'appuie de Déconnexion appel finish() qui ferme l'activité courante
+     * */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_QUIT:
+
+                //ferme l'activité courante
+                finish();
+                return true;
+        }
+        return false;
+    }
     private String addr_serv = "http://vps814672.ovh.net/";
     private boolean doneGetCamera;
     private Camera c;
     private ProgressDialog mProgressDialog;
+
+    private boolean removedone = false;
+    private boolean removeresult = false;
 
     private boolean CameraLoading = false;
     private boolean VideosLoading = false;
@@ -214,6 +246,7 @@ public class VueCamera extends AppCompatActivity {
         VideosLoading = false;
         ImagesLoading = false;
 
+
         CameraDBManager.CameraDBCallbackInterface callbackCamera = new CameraDBManager.CameraDBCallbackInterface() {
             @Override
             public void onQueryFinished(String operation, String output) {
@@ -227,6 +260,60 @@ public class VueCamera extends AppCompatActivity {
 
                         TextView tw = (TextView) findViewById(R.id.NomCamera);
                         tw.setText(c.getName());
+
+
+                        Picasso.get().load(c.getIp()).centerCrop().fit().into((ImageView) findViewById(R.id.previewDirect));
+
+                        ((Button) findViewById(R.id.boutonSupprimer)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                removedone = false;
+                                removeresult = false;
+
+                                final Camera cam = c;
+
+                                CameraDBManager.CameraDBCallbackInterface callbackImage = new CameraDBManager.CameraDBCallbackInterface() {
+                                    @Override
+                                    public void onQueryFinished(String operation, String output) {
+                                        Log.d("VueCamera", "(onQueryFinished) -> "+ operation);
+                                        if(operation.equals(CameraDBManager.CAMERA_DB_REMOVE)){
+                                            try {
+                                                Log.d("VueCamera", "(retour IMAGE_DB_GETBYCAMERA) -> " + output);
+                                                if(output.equals("REMOVE_SUCCESSFUL"))
+                                                    removeresult = true;
+                                                else
+                                                    removeresult = false;
+                                                removedone = true;
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                };
+                                CameraDBManager.removeCamera(callbackImage,cam);
+
+                                Thread checkLoading = new Thread(new Runnable(){
+                                    @Override
+                                    public void run() {
+                                        while(!(removedone))
+                                            Log.d("VueCamera", "(Waiting for loading to endd) -> (CameraLoading : " + CameraLoading + "); (VideosLoading : " + VideosLoading + "); (ImagesLoading : " +ImagesLoading+")");
+
+                                            context.runOnUiThread(new Runnable(){
+                                            @Override
+                                            public void run() {
+                                                if(removeresult)
+                                                    finish();
+                                                if (mProgressDialog != null)
+                                                    mProgressDialog.dismiss();
+                                            }
+                                        });
+                                    }
+                                });
+
+                                checkLoading.start();
+                            }
+                        });
+
 
                         ((Button) findViewById(R.id.boutonDirect)).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -317,5 +404,10 @@ public class VueCamera extends AppCompatActivity {
         });
 
         checkLoading.start();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        session.deconnexionSession();
     }
 }

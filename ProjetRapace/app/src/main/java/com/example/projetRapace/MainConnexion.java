@@ -83,7 +83,7 @@ public class MainConnexion extends AppCompatActivity {
         Date now = new Date();
         SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         String dateFormatee = format.format(now);
-        session.creationLoginSession(u.getPseudo_utilisateur(), dateFormatee);
+        session.creationLoginSession(u.getPseudo_utilisateur(), dateFormatee, u.getId_utilisateur());
 
         Intent intentVueCamera = new Intent(this, MainCardViewLocal.class);
         startActivity(intentVueCamera);

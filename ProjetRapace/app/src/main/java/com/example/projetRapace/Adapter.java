@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetRapace.Camera.Camera;
+import com.example.projetRapace.Local.Local;
 
 import java.util.List;
 

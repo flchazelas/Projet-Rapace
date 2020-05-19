@@ -34,6 +34,8 @@ public class SessionManager {
     // DateAccess Utilisateur
     public static final String KEY_DATE = "date";
 
+    public static int user_id = -1;
+
     // Constructeur
     public SessionManager(Context context){
         this._context = context;
@@ -44,7 +46,7 @@ public class SessionManager {
     /**
      * Crée la Session
      * */
-    public void creationLoginSession(String pseudo, String dateNow){
+    public void creationLoginSession(String pseudo, String dateNow, int user_id){
         // Mais le boolean IS_Logged à true
         editor.putBoolean(IS_LOGGED, true);
 
@@ -53,6 +55,8 @@ public class SessionManager {
 
         // Stock la date
         editor.putString(KEY_DATE, dateNow);
+
+        this.user_id = user_id;
 
         // prend en compte les changements
         editor.commit();
@@ -98,6 +102,7 @@ public class SessionManager {
     public void deconnexionSession(){
 
         editor.putBoolean(IS_LOGGED, false);
+        user_id = -1;
         editor.commit();
 
         // Redirection vers MainConnexion

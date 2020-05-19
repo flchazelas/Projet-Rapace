@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.projetRapace.AccesHTTP;
 import com.example.projetRapace.AsyncReponse;
+import com.example.projetRapace.Local.Local;
 import com.example.projetRapace.MainConnexion;
 import com.example.projetRapace.MainEnregistrement;
 import com.example.projetRapace.Utilisateur;
@@ -22,6 +23,7 @@ public class CameraDBManager implements AsyncReponse {
     public static String CAMERA_DB_GETBYID = "GET_BY_ID";
     public static String CAMERA_DB_GETALL = "GET_ALL";
     public static String CAMERA_DB_REMOVE = "REMOVE";
+    public static String CAMERA_DB_GETBYLOCAL = "GET_BY_LOCAL";
 
     private static final String SERVER_ADDR = "http://51.178.182.46/camera_db_access.php";
 
@@ -75,7 +77,7 @@ public class CameraDBManager implements AsyncReponse {
         accesHTTP.execute(SERVER_ADDR);
     }
 
-    public static void addCamera(CameraDBCallbackInterface callback, Camera c){
+    public static void addCamera(CameraDBCallbackInterface callback, Camera c, int id_local){
         AccesHTTP accesHTTP = new AccesHTTP();;
         accesHTTP.delegate = new CameraDBManager(callback);
 
@@ -83,6 +85,7 @@ public class CameraDBManager implements AsyncReponse {
         Map<String,Object> data = new HashMap<>();
         data.put("name", c.getName());
         data.put("ip", c.getIp());
+        data.put("id_local", id_local);
         accesHTTP.addParam("donnees", gson.toJson(data));
         Log.d("CameraDBManager", "(addCamera) -> "+ gson.toJson(data));
 
@@ -97,6 +100,18 @@ public class CameraDBManager implements AsyncReponse {
         data.put("id", c.getId());
         accesHTTP.addParam("donnees", gson.toJson(data));
         Log.d("CameraDBManager", "(removeCamera) -> "+ c.toJSON().toString());
+
+        accesHTTP.execute(SERVER_ADDR);
+    }
+
+    public static void getByLocal(CameraDBCallbackInterface callback, int id_local){
+        AccesHTTP accesHTTP = new AccesHTTP();;
+        accesHTTP.delegate = new CameraDBManager(callback);
+
+        accesHTTP.addParam("operation", CAMERA_DB_GETBYLOCAL);Map<String,Object> data = new HashMap<>();
+        data.put("id", id_local);
+        accesHTTP.addParam("donnees", gson.toJson(data));
+        Log.d("CameraDBManager", "(getById) -> " + id_local);
 
         accesHTTP.execute(SERVER_ADDR);
     }

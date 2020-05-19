@@ -64,7 +64,8 @@ public class UtilisateurManagerDistant implements AsyncReponse{
                     //Récupération des données d'un utilisateur
                     String pseudo = info.getString("username");
                     String mdp = info.getString("password");
-                    Utilisateur utilisateur = new Utilisateur(pseudo, mdp);
+                    int id = info.getInt("id");
+                    Utilisateur utilisateur = new Utilisateur(id,pseudo, mdp);
 
                     //Affiche l'utilisateur dans la console et redirection
                     Log.d("utilisateur", "---------------"+utilisateur.getPseudo_utilisateur());

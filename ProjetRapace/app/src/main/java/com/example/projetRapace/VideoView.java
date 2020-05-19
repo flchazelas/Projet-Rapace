@@ -29,6 +29,31 @@ import java.util.Calendar;
 public class VideoView extends AppCompatActivity {
     private MjpegView mv;
     private static final int MENU_QUIT = 1;
+    private SessionManager session;
+
+    /**
+     * Création d'un menu d'Items dans la Barre du Haut de l'application
+     * Ajout de l'option de déconnexion
+     * */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_QUIT, 0, R.string.logout);
+        return true;
+    }
+
+    /**
+     * Gère le menu d'Items
+     * Pour l'appuie de Déconnexion appel finish() qui ferme l'activité courante
+     * */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_QUIT:
+
+                //ferme l'activité courante
+                finish();
+                return true;
+        }
+        return false;
+    }
 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -43,6 +68,7 @@ public class VideoView extends AppCompatActivity {
         });
 
         if(intent != null) {
+
             final String ip = intent.getStringExtra("ip");
             if (ip != null) {
 
@@ -56,5 +82,11 @@ public class VideoView extends AppCompatActivity {
                 videoView.start();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        session.deconnexionSession();
     }
 }
