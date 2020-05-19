@@ -128,10 +128,8 @@ public class CameraView extends AppCompatActivity {
                 ((Button) findViewById(R.id.exitControl)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(context, VueCamera.class);
-
-                        intent.putExtra("id", id);
-                        startActivity(intent);
+                        mv.stopPlayback();
+                        finish();
                     }
                 });
 
@@ -155,9 +153,4 @@ public class CameraView extends AppCompatActivity {
             mv.startPlayback();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        session.deconnexionSession();
-    }
 }

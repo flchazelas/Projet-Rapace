@@ -405,9 +405,4 @@ public class VueCamera extends AppCompatActivity {
 
         checkLoading.start();
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        session.deconnexionSession();
-    }
 }
