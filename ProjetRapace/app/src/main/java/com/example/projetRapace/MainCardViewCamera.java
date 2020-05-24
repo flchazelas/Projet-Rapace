@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.example.projetRapace.Camera.Camera;
 import com.example.projetRapace.Camera.CameraDBManager;
-import com.example.projetRapace.Local.Local;
 
 import org.json.JSONArray;
 
@@ -43,7 +42,7 @@ public class MainCardViewCamera extends AppCompatActivity {
     private SessionManager session;
     private Button buttonAjout;
     private Intent intent;
-    private Adapter adapter;
+    private AdapterCardView adapterCardView;
 
     private static final int MENU_QUIT = 1;
 
@@ -65,6 +64,7 @@ public class MainCardViewCamera extends AppCompatActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
+                session.deconnexionSession();
                 finish();
                 return true;
         }
@@ -135,13 +135,13 @@ public class MainCardViewCamera extends AppCompatActivity {
                 //définit l'agencement des cellules, ici de façon verticale, comme une ListView
                 //recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-                //pour adapter en grille comme un RecyclerView, avec 2 cellules par ligne
+                //pour adapterCardView en grille comme un RecyclerView, avec 2 cellules par ligne
                 recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
-                //Création d'un Adapter, lui fournir notre liste de Caméras.
-                //Adapter servira à remplir notre Recyclerview
-                adapter = new Adapter(cameras);
-                recyclerView.setAdapter(adapter);
+                //Création d'un AdapterCardView, lui fournir notre liste de Caméras.
+                //AdapterCardView servira à remplir notre Recyclerview
+                adapterCardView = new AdapterCardView(cameras);
+                recyclerView.setAdapter(adapterCardView);
 
 
             }
@@ -152,12 +152,13 @@ public class MainCardViewCamera extends AppCompatActivity {
      * onDestroy(), gère la destruction de l'activité
      * Déconnecte l'utilisateur si l'activité est détruite via la session
      * */
+    /*
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if(!session.isLoggedIn())
             session.deconnexionSession();
-    }
+    }*/
 
     private boolean ajouterCamera(){
         final int id_local = this.id;
@@ -284,7 +285,7 @@ public class MainCardViewCamera extends AppCompatActivity {
                         mProgressDialog.dismiss();
                     //affichage
                     if(fetch_cameras_query_result)
-                        adapter.notifyDataSetChanged();
+                        adapterCardView.notifyDataSetChanged();
                     else
                         Toast.makeText(context, "Erreur lors de la récupération des Cameras.\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
                     }

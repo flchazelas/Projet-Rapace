@@ -8,7 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:gravity="center"
-        android:text="S'identifier"
+        android:text="@string/user_profile"
         android:textColor="#F8000000"
         android:textSize="24sp"
         android:textStyle="bold" />
@@ -16,8 +16,7 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="400dp"
-        android:layout_marginTop="100dp"
-        android:layout_centerInParent="true">
+        android:layout_marginTop="100dp">
 
         <TextView
             android:id="@+id/textPseudo"
@@ -55,39 +54,14 @@
             android:layout_below="@id/pseudo"/>
 
         <Button
-            android:id="@+id/buttonConnexion"
+            android:id="@+id/buttonValidate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/login"
+            android:text="@string/validate"
             android:textSize="12sp"
             android:gravity="center"
             android:layout_below="@id/password"
             android:layout_centerInParent="true"/>
 
-<!--
-        <TextView
-            android:id="@+id/compte"
-            android:layout_width="700px"
-            android:layout_height="102px"
-            android:layout_below="@id/buttonConnexion"
-            android:gravity="center"
-            android:text="@string/no_account"
-            android:layout_marginTop="50dp"
-            android:layout_centerInParent="true"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/buttonRegister"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/register"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:layout_below="@id/compte"
-            android:layout_centerInParent="true"/>
--->
-
     </RelativeLayout>
-
-
 </RelativeLayout>

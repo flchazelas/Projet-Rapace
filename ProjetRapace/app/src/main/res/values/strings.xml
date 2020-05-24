@@ -14,4 +14,21 @@
     <string name="register_failed">Register Failed</string>
     <string name="username_already_used">Your Username is already used ! Please try to register again !</string>
     <string name="logout">Logout</string>
+    <string name="account_disabled">Your Account is disabled ! Please try to connect again !</string>
+    <string name="user_administration">User Administration</string>
+    <string name="add_user">Add User</string>
+    <string name="delete">Delete</string>
+    <string name="disable">Disable</string>
+    <string name="list_locaux">List Locaux</string>
+    <string name="change_admin">Change State Admin</string>
+    <string name="admin">Admin</string>
+    <string name="change_able">Change State Able</string>
+    <string name="user_profile">User Profile</string>
+    <string name="direct">Direct Camera</string>
+    <string name="call_local_num">Call local number</string>
+    <string name="call_uti_num">Call user number</string>
+    <string name="ignore_alert">Ignore Alert</string>
+    <string name="trigger_alarm">Trigger Alarm</string>
+    <string name="history">Actions History</string>
+    <string name="phone_number">Phone Number</string>
 </resources>

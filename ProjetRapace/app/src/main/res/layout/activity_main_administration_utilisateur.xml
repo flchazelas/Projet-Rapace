@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <TextView
+        android:id="@+id/titre"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="@string/user_administration"
+        android:textColor="#F8000000"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/firstRelative"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true">
+
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:listSelector="@color/cardview_dark_background"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/secondRelative"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/firstRelative"
+        android:layout_above="@+id/thirdRelative">
+
+        <Button
+            android:id="@+id/add_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_user"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/thirdRelative"
+        android:layout_width="fill_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true">
+
+        <RelativeLayout
+            android:layout_width="@android:dimen/thumbnail_width"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true">
+
+            <Button
+                android:id="@+id/desactiver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/change_able"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:clickable="false"
+                android:backgroundTint="@color/cardview_dark_background"/>
+
+            <Button
+                android:id="@+id/admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/change_admin"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/desactiver"
+                android:layout_centerHorizontal="true"
+                android:clickable="false"
+                android:backgroundTint="@color/cardview_dark_background"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="@android:dimen/thumbnail_width"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true">
+
+            <Button
+                android:id="@+id/supprimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/delete"
+                android:layout_centerHorizontal="true"
+                android:clickable="false"
+                android:backgroundTint="@color/cardview_dark_background"/>
+
+            <Button
+                android:id="@+id/modif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/change"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/supprimer"
+                android:clickable="false"
+                android:backgroundTint="@color/cardview_dark_background"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</RelativeLayout>

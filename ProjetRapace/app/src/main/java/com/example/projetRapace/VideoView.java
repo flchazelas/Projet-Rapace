@@ -49,6 +49,7 @@ public class VideoView extends AppCompatActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
+                session.deconnexionSession();
                 finish();
                 return true;
         }
@@ -84,9 +85,10 @@ public class VideoView extends AppCompatActivity {
         }
     }
 
+    /*
     @Override
     protected void onDestroy() {
         super.onDestroy();
         session.deconnexionSession();
-    }
+    }*/
 }

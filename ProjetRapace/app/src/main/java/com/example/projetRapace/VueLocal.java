@@ -51,6 +51,7 @@ public class VueLocal extends AppCompatActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
+                session.deconnexionSession();
                 finish();
                 return true;
         }
@@ -285,9 +286,10 @@ public class VueLocal extends AppCompatActivity {
         LocalDBManager.getById(callbackVideo,id);
     }
 
+    /*
     @Override
     protected void onDestroy() {
         super.onDestroy();
         session.deconnexionSession();
-    }
+    }*/
 }

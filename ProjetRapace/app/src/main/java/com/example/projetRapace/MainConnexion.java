@@ -30,7 +30,7 @@ public class MainConnexion extends AppCompatActivity {
     private EditText editPseudo;
     private EditText editMdp;
     private Button buttonConnexion;
-    private Button buttonEnregistrement;
+    //private Button buttonEnregistrement;
     private Intent intent;
     private SessionManager session;
 
@@ -38,6 +38,7 @@ public class MainConnexion extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connexion);
+        checkPermission();
 
         // Service de vérification de connexion
         intent = new Intent(MainConnexion.this, RapaceService.class);
@@ -52,7 +53,7 @@ public class MainConnexion extends AppCompatActivity {
         editPseudo = (EditText)findViewById(R.id.pseudo);
         editMdp = (EditText)findViewById(R.id.password);
         buttonConnexion = (Button)findViewById(R.id.buttonConnexion);
-        buttonEnregistrement = (Button)findViewById(R.id.buttonRegister);
+        //buttonEnregistrement = (Button)findViewById(R.id.buttonRegister);
 
         buttonConnexion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +70,7 @@ public class MainConnexion extends AppCompatActivity {
                 //startActivity(intent);
             }
         });
-
+/*
         buttonEnregistrement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,16 +78,39 @@ public class MainConnexion extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+*/
     }
 
     public void verifConnexion(Utilisateur u){
-        Date now = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
-        String dateFormatee = format.format(now);
-        session.creationLoginSession(u.getPseudo_utilisateur(), dateFormatee, u.getId_utilisateur());
+        if(u.getIsActif() == 1) {
+            Date now = new Date();
+            SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+            String dateFormatee = format.format(now);
+            if(u.getIsAdmin() == 1) {
+                session.creationLoginSession(u.getPseudo_utilisateur(), dateFormatee, u.getId_utilisateur(), true);
+            }
+            else{
+                session.creationLoginSession(u.getPseudo_utilisateur(), dateFormatee, u.getId_utilisateur(), false);
+            }
 
-        Intent intentVueCamera = new Intent(this, MainCardViewLocal.class);
-        startActivity(intentVueCamera);
+            Intent intentVueCamera = new Intent(this, MainCardViewLocal.class);
+            startActivity(intentVueCamera);
+        }
+        else{
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainConnexion.this);
+
+            alertDialog.setTitle(R.string.connection_failed);
+            alertDialog.setMessage(R.string.account_disabled);
+
+            alertDialog.setNegativeButton(R.string.return_, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Toast.makeText(getApplicationContext(), R.string.return_, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            alertDialog.show();
+        }
     }
 
     public void echecConnexion(){
@@ -109,11 +133,12 @@ public class MainConnexion extends AppCompatActivity {
 
     public void checkPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (!(checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            if (!(checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{
                         Manifest.permission.INTERNET,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,}, 1);
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CALL_PHONE,}, 1);
             }
         }
     }

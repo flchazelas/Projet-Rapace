@@ -59,6 +59,7 @@ public class VueCamera extends AppCompatActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
+                session.deconnexionSession();
                 finish();
                 return true;
         }

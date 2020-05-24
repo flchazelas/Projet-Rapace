@@ -64,6 +64,8 @@ public class RapaceService extends IntentService {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+            int t = 5;
+
             //Récupération de la valeur en Entier de chacune des dates pour savoir si l'utilisateur n'est pas actif sur l'application depuis plus de 1min
             int time = now.getDate();
             Log.d("DATE : ", String.valueOf(time));
@@ -74,14 +76,35 @@ public class RapaceService extends IntentService {
             //Si la date est le même jour
             //Sinon Requête de déconnexion envoyée
             if(time == timeBDD){
-                time = now.getMinutes();
-                timeBDD = nowBDD.getMinutes();
-                //Si les minutes sont supérieures à 1 => Requête de déconnexion envoyée
-                //Sinon on met à jour la date en BDD
-                if(time > timeBDD)
-                    m.envoi("deconnexion", u.convertionJSONArray());
-                else
-                    m.envoi("changeDate", u.convertionJSONArray());
+                time = now.getHours();
+                Log.d("DATE : ", String.valueOf(time));
+                timeBDD = nowBDD.getHours();
+                Log.d("DATE BDD : ", String.valueOf(timeBDD));
+                if(time == timeBDD){
+                    time = now.getMinutes();
+                    Log.d("DATE : ", String.valueOf(time));
+                    timeBDD = nowBDD.getMinutes();
+                    Log.d("DATE BDD : ", String.valueOf(timeBDD));
+                    //Si les minutes sont supérieures à 1 => Requête de déconnexion envoyée
+                    //Sinon on met à jour la date en BDD
+                    if(time > timeBDD + t)
+                        m.envoi("deconnexion", u.convertionJSONArray());
+                    else
+                        m.envoi("changeDate", u.convertionJSONArray());
+                }
+                else{
+                    time = now.getMinutes();
+                    Log.d("DATE : ", String.valueOf(time));
+                    timeBDD = nowBDD.getMinutes();
+                    Log.d("DATE BDD : ", String.valueOf(timeBDD));
+                    int total = 60 - timeBDD + time;
+                    Log.d("DATE TOTAL : ", String.valueOf(total));
+                    if(total > t)
+                        m.envoi("deconnexion", u.convertionJSONArray());
+                    else
+                        m.envoi("changeDate", u.convertionJSONArray());
+                }
+
             }
             else {
                 m.envoi("deconnexion", u.convertionJSONArray());
@@ -98,7 +121,7 @@ public class RapaceService extends IntentService {
      * Vérifie si l'utilisateur est tjrs connecté
      * */
     public void verifConnecte(String s){
-        session.setDonneesSession(s);
+        session.setData(s);
 
     }
 

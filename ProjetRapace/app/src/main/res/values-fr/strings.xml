@@ -14,4 +14,21 @@
     <string name="register_failed">Echec d\'enregistrement</string>
     <string name="username_already_used">Votre Pseudo est déjà utilisé ! Veuillez vous ré-enregistrer !</string>
     <string name="logout">Se déconnecter</string>
+    <string name="account_disabled">Votre compte est désactivé ! Veuillez-vous re-connecter !</string>
+    <string name="user_administration">Administration Utilisateur</string>
+    <string name="add_user">Ajouter Utilisateur</string>
+    <string name="delete">Supprimer</string>
+    <string name="list_locaux">Liste Locaux</string>
+    <string name="disable">Désactiver</string>
+    <string name="change_admin">Changer Etat Admin</string>
+    <string name="admin">Admin</string>
+    <string name="change_able">Changer Etat Actif</string>
+    <string name="user_profile">Profil Utilisateur</string>
+    <string name="direct">Direct Caméra</string>
+    <string name="call_local_num">Appeller numéro du local</string>
+    <string name="call_uti_num">Appeller numéro Utilisateur</string>
+    <string name="ignore_alert">Ignorer Alerte</string>
+    <string name="trigger_alarm">Déclencher Alarme</string>
+    <string name="history">Historique Actions</string>
+    <string name="phone_number">Numéro de Téléphone</string>
 </resources>
