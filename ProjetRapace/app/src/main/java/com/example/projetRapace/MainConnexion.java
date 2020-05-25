@@ -21,7 +21,7 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainConnexion extends AppCompatActivity {
+public class MainConnexion extends BaseActivity {
 
     private static final int CODE_ACTIVITY = 1;
 

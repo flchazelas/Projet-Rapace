@@ -12,20 +12,23 @@ public class Local{
     private int id;
     private String name;
     private String address;
+    private String phoneNumber;
 
     private String image; //présent uniquement en local
 
-    public Local(int id, String name, String address){
+    public Local(int id, String name, String address, String phoneNumber){
         this.setId(id);
         this.setName(name);
         this.setAddress(address);
+        this.setPhoneNumber(phoneNumber);
 
         this.setImage("https://fr.zenit.org/wp-content/uploads/2018/05/no-image-icon.png");
     }
 
-    public Local(String name, String address){
+    public Local(String name, String address, String phoneNumber){
         this.setName(name);
         this.setAddress(address);
+        this.setPhoneNumber(phoneNumber);
 
         this.setImage("https://fr.zenit.org/wp-content/uploads/2018/05/no-image-icon.png");
     }
@@ -60,7 +63,7 @@ public class Local{
     public static Local localFromJSON(JSONObject jsonObject){
         Local l;
         try {
-            l = new Local(jsonObject.getInt("id"),jsonObject.getString("name"),jsonObject.getString("address"));
+            l = new Local(jsonObject.getInt("id"),jsonObject.getString("name"),jsonObject.getString("address"), jsonObject.getString("numeroUrgence"));
             return l;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -77,7 +80,7 @@ public class Local{
         for (int i = 0; i < jsonArray.length(); ++i) {
             try {
                 object = jsonArray.getJSONObject(i);
-                l = new Local(object.getInt("id"),object.getString("name"),object.getString("address"));
+                l = new Local(object.getInt("id"),object.getString("name"),object.getString("address"), object.getString("numeroUrgence"));
 
                 locaux.add(l);
             } catch (JSONException e) {
@@ -102,5 +105,13 @@ public class Local{
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

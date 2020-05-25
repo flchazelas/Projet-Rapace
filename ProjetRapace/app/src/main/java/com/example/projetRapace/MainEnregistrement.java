@@ -16,7 +16,7 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainEnregistrement extends AppCompatActivity {
+public class MainEnregistrement extends BaseActivity {
 
     private TextView textPseudo;
     private TextView textMdp;

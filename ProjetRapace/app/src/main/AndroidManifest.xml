@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".VueLocal"></activity>
+        <activity android:name=".BaseActivity"></activity>
+        <activity android:name=".VueLocal" />
 
         <uses-library
             android:name="org.apache.http.legacy"

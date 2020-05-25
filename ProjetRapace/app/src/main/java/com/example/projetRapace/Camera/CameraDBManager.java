@@ -20,6 +20,7 @@ import java.util.Map;
 
 public class CameraDBManager implements AsyncReponse {
     public static String CAMERA_DB_ADD = "ADD";
+    public static String CAMERA_DB_UPDATE = "UPDATE";
     public static String CAMERA_DB_GETBYID = "GET_BY_ID";
     public static String CAMERA_DB_GETALL = "GET_ALL";
     public static String CAMERA_DB_REMOVE = "REMOVE";
@@ -44,7 +45,7 @@ public class CameraDBManager implements AsyncReponse {
         if(msg.length > 1){
             try {
                 String operation = msg[0].replace(" ", "");
-                Log.d("CameraDBManager", "(processFinish) -> "+msg[1]);
+                Log.d("CameraDBManager", "(processFinish = " + operation + ") -> "+msg[1]);
                 this.callback.onQueryFinished(operation, msg[1]);
             } catch (Exception e) {
                 //Gestion de l'erreur extraction JSON
@@ -88,6 +89,21 @@ public class CameraDBManager implements AsyncReponse {
         data.put("id_local", id_local);
         accesHTTP.addParam("donnees", gson.toJson(data));
         Log.d("CameraDBManager", "(addCamera) -> "+ gson.toJson(data));
+
+        accesHTTP.execute(SERVER_ADDR);
+    }
+
+    public static void updateCamera(CameraDBCallbackInterface callback, Camera c){
+        AccesHTTP accesHTTP = new AccesHTTP();;
+        accesHTTP.delegate = new CameraDBManager(callback);
+
+        accesHTTP.addParam("operation", CAMERA_DB_UPDATE);
+        Map<String,Object> data = new HashMap<>();
+        data.put("id", c.getId());
+        data.put("name", c.getName());
+        data.put("ip", c.getIp());
+        accesHTTP.addParam("donnees", gson.toJson(data));
+        Log.d("CameraDBManager", "(updateCamera) -> "+ gson.toJson(data));
 
         accesHTTP.execute(SERVER_ADDR);
     }

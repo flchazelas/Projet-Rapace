@@ -3,6 +3,7 @@ package com.example.projetRapace;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,13 +29,11 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
         this.itemView=itemView;
         //Si le type est 0, on gère des Locaux
         if(type == 0){
-
             //c'est ici que l'on fait nos findView
             textViewView = (TextView) itemView.findViewById(R.id.text);
             imageView = (ImageView) itemView.findViewById(R.id.image);
-
             buttonModif = (ImageButton) itemView.findViewById(R.id.buttonModif);
-            buttonModif.setVisibility(View.GONE);
+            //buttonModif.setVisibility(View.GONE);
         }
         //Sinon on gère des Caméras
         else if(type == 1){
@@ -44,7 +43,6 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
             textViewView = (TextView) itemView.findViewById(R.id.text);
             imageView = (ImageView) itemView.findViewById(R.id.image);
             buttonModif = (ImageButton) itemView.findViewById(R.id.buttonModif);
-            buttonModif.setVisibility(View.GONE);
         }
     }
 
@@ -71,6 +69,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
             public void onClick(View view) {
                 Intent intent = new Intent(itemView.getContext(), VueLocal.class);
 
+                Log.d("bindLocal", "(id) -> " + l.getId());
                 intent.putExtra("id", l.getId());
                 itemView.getContext().startActivity(intent);
             }
@@ -89,8 +88,22 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Intent intent = new Intent(itemView.getContext(), CameraView.class);
+
+                intent.putExtra("id", c.getId());
+                intent.putExtra("ip", c.getIp());
+                itemView.getContext().startActivity(intent);
+            }
+        });
+
+        buttonModif = (ImageButton) itemView.findViewById(R.id.buttonModif);
+        buttonModif.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Intent intent = new Intent(itemView.getContext(), VueCamera.class);
                 intent.putExtra("id", c.getId());
+
                 itemView.getContext().startActivity(intent);
             }
         });

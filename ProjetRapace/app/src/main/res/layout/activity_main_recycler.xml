@@ -138,6 +138,26 @@
                         android:hint="\u002211 rue sèze, 69006\u0022"
                         android:inputType="textPostalAddress" />
                 </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/layoutNumero">
+
+                    <TextView
+                        android:id="@+id/textPhoneNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Contact en cas d'alerte"/>
+
+                    <EditText
+                        android:id="@+id/editPhoneNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="\u002204 56 98 37 56\u0022"
+                        android:inputType="phone" />
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"

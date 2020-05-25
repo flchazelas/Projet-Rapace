@@ -13,13 +13,14 @@ import java.util.Map;
 
 public class LocalDBManager implements AsyncReponse {
     public static String LOCAL_DB_ADD = "ADD";
+    public static String LOCAL_DB_UPDATE = "UPDATE";
     public static String LOCAL_DB_GETBYID = "GET_BY_ID";
     public static String LOCAL_DB_GETALL = "GET_ALL";
     public static String LOCAL_DB_REMOVE = "REMOVE";
     public static String LOCAL_DB_ADD_USER_PERMISSION = "ADD_USER_PERMISSION";
     public static String LOCAL_DB_GET_BY_USER = "GET_BY_USER";
-    public static String LOCAL_DB_GET_USERS_PERMISSIONS = "GET_USERS_PERMISSIONS";
-    public static String LOCAL_DB_CHANGE_USERS_PERMISSIONS = "CHANGE_USERS_PERMISSIONS";
+    public static String LOCAL_DB_GET_USERS_PERMISSIONS = "GET_USERS_PERMISSION";
+    public static String LOCAL_DB_CHANGE_USERS_PERMISSIONS = "CHANGE_USER_PERMISSION";
 
     private static final String SERVER_ADDR = "http://51.178.182.46/local_db_access.php";
 
@@ -40,7 +41,7 @@ public class LocalDBManager implements AsyncReponse {
         if(msg.length > 1){
             try {
                 String operation = msg[0].replace(" ", "");
-                Log.d("LocalDBManager", "(processFinish) -> "+msg[1]);
+                Log.d("LocalDBManager", "(processFinish " + msg[0] + ") -> "+msg[1]);
                 this.callback.onQueryFinished(operation, msg[1]);
             } catch (Exception e) {
                 //Gestion de l'erreur extraction JSON
@@ -81,9 +82,26 @@ public class LocalDBManager implements AsyncReponse {
         Map<String,Object> data = new HashMap<>();
         data.put("name", l.getName());
         data.put("address", l.getAddress());
+        data.put("num", l.getAddress());
         data.put("id_user", user_id);
         accesHTTP.addParam("donnees", gson.toJson(data));
         Log.d("LocalDBManager", "(addLocal) -> "+ gson.toJson(data));
+
+        accesHTTP.execute(SERVER_ADDR);
+    }
+
+    public static void updateLocal(LocalDBManager.LocalDBCallbackInterface callback, Local l){
+        AccesHTTP accesHTTP = new AccesHTTP();;
+        accesHTTP.delegate = new LocalDBManager(callback);
+
+        accesHTTP.addParam("operation", LOCAL_DB_UPDATE);
+        Map<String,Object> data = new HashMap<>();
+        data.put("id", l.getId());
+        data.put("name", l.getName());
+        data.put("address", l.getAddress());
+        data.put("num", l.getPhoneNumber());
+        accesHTTP.addParam("donnees", gson.toJson(data));
+        Log.d("LocalDBManager", "(updateLocal) -> "+ gson.toJson(data));
 
         accesHTTP.execute(SERVER_ADDR);
     }
@@ -120,7 +138,7 @@ public class LocalDBManager implements AsyncReponse {
         accesHTTP.addParam("operation", LOCAL_DB_GET_BY_USER);Map<String,Object> data = new HashMap<>();
         data.put("id_user", user_id);
         accesHTTP.addParam("donnees", gson.toJson(data));
-        Log.d("LocalDBManager", "(addUserPermissionToLocal) -> user = " + user_id);
+        Log.d("LocalDBManager", "(getByUser) -> user = " + user_id);
 
         accesHTTP.execute(SERVER_ADDR);
     }
@@ -132,7 +150,7 @@ public class LocalDBManager implements AsyncReponse {
         accesHTTP.addParam("operation", LOCAL_DB_GET_USERS_PERMISSIONS);Map<String,Object> data = new HashMap<>();
         data.put("id_local", id_local);
         accesHTTP.addParam("donnees", gson.toJson(data));
-        Log.d("LocalDBManager", "(getUsersPermissions) -> user = " + id_local);
+        Log.d("LocalDBManager", "(getUsersPermissions) -> local = " + id_local);
 
         accesHTTP.execute(SERVER_ADDR);
     }
@@ -145,7 +163,7 @@ public class LocalDBManager implements AsyncReponse {
         data.put("id_local", id_local);
         data.put("id_user", id_user);
         accesHTTP.addParam("donnees", gson.toJson(data));
-        Log.d("LocalDBManager", "(changeUserPermission) -> user = " + id_local);
+        Log.d("LocalDBManager", "(changeUserPermission) -> user = " + id_user);
 
         accesHTTP.execute(SERVER_ADDR);
     }

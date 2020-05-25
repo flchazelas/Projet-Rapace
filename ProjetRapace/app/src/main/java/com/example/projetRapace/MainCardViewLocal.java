@@ -24,7 +24,8 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainCardViewLocal extends AppCompatActivity {
+public class MainCardViewLocal extends BaseActivity {
+    boolean shouldExecuteOnResume;
     private ProgressDialog mProgressDialog;
 
     boolean add_local_query_done = false;
@@ -67,6 +68,18 @@ public class MainCardViewLocal extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(shouldExecuteOnResume){
+            session.checkLogin();
+            ajouterLocaux();
+        } else{
+            shouldExecuteOnResume = true;
+        }
+    }
+
     /**
      * OnCreate(), lancement de l'activité
      * */
@@ -74,10 +87,14 @@ public class MainCardViewLocal extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_recycler);
+        shouldExecuteOnResume = false;
+
+        final Activity context = this;
 
         ((Button)findViewById(R.id.ajoutLocal)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hideKeyboard(context);
                 if(ajouterLocal())//Si tout ok on cache
                     findViewById(R.id.addLocalLayout).setVisibility(View.GONE);
             }
@@ -85,6 +102,7 @@ public class MainCardViewLocal extends AppCompatActivity {
         ((Button)findViewById(R.id.retourAjoutLocal)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hideKeyboard(context);
                 findViewById(R.id.addLocalLayout).setVisibility(View.GONE);
             }
         });
@@ -212,11 +230,15 @@ public class MainCardViewLocal extends AppCompatActivity {
 
         String name = ((EditText) findViewById(R.id.editTextName)).getText().toString();
         String address = ((EditText) findViewById(R.id.editTextAddress)).getText().toString();
+        String number = ((EditText) findViewById(R.id.editPhoneNumber)).getText().toString();
         if (name.equals("")) {
             ((EditText) findViewById(R.id.editTextName)).setError("Veuillez choisir un nom de local.");
             return false;
         }if (address.equals("")) {
             ((EditText) findViewById(R.id.editTextAddress)).setError("Veuillez choisir une adresse.");
+            return false;
+        }if (number.equals("")) {
+            ((EditText) findViewById(R.id.editPhoneNumber)).setError("Veuillez entrer le numéro a contacter en cas d'urgence.");
             return false;
         }
 
@@ -242,7 +264,7 @@ public class MainCardViewLocal extends AppCompatActivity {
                 }
             }
         };
-        Local v = new Local(name,address);
+        Local v = new Local(name,address,number);
         Log.d("saveRecord", "(retour USER_ID) -> "+ session.user_id);
 
         if(session.user_id ==-1){

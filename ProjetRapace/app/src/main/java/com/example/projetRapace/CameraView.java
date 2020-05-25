@@ -32,7 +32,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class CameraView extends AppCompatActivity {
+public class CameraView extends BaseActivity {
     private MjpegView mv;
     private static final int MENU_QUIT = 1;
     private SessionManager session;
@@ -64,8 +64,15 @@ public class CameraView extends AppCompatActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         Intent intent = getIntent();
-
         if(intent != null) {
+
+            // Lancement du Service de vérification de connexion
+            Intent intentSession = new Intent(CameraView.this, RapaceService.class);
+            startService(intentSession);
+
+            // Lancement du Session Manager pour stocker l'utilisateur
+            session = new SessionManager(getApplicationContext());
+            session.checkLogin();
 
             final int id = intent.getIntExtra("id", -1);
             final String ip = intent.getStringExtra("ip");
@@ -129,6 +136,7 @@ public class CameraView extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         mv.stopPlayback();
+                        //retour activité précédente
                         finish();
                     }
                 });
@@ -152,5 +160,4 @@ public class CameraView extends AppCompatActivity {
         if(mv != null)
             mv.startPlayback();
     }
-
 }

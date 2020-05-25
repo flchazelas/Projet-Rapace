@@ -26,7 +26,7 @@ import com.example.projetRapace.streamlib.VideoLoaderAsync;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class VideoView extends AppCompatActivity {
+public class VideoView extends BaseActivity {
     private MjpegView mv;
     private static final int MENU_QUIT = 1;
     private SessionManager session;
@@ -59,15 +59,24 @@ public class VideoView extends AppCompatActivity {
         super.onCreate(icicle);
         Intent intent = getIntent();
         setContentView(R.layout.activity_video_view);
-
+        final Activity context = this;
         ((Button) findViewById(R.id.boutonRetour)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(context, VueCamera.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
 
         if(intent != null) {
+            // Lancement du Service de vérification de connexion
+            intent = new Intent(VideoView.this, RapaceService.class);
+            startService(intent);
+
+            // Lancement du Session Manager pour stocker l'utilisateur
+            session = new SessionManager(getApplicationContext());
+            session.checkLogin();
 
             final String ip = intent.getStringExtra("ip");
             if (ip != null) {
@@ -82,11 +91,5 @@ public class VideoView extends AppCompatActivity {
                 videoView.start();
             }
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        session.deconnexionSession();
     }
 }

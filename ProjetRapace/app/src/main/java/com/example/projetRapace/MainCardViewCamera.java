@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +27,8 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainCardViewCamera extends AppCompatActivity {
+public class MainCardViewCamera extends BaseActivity {
+    boolean shouldExecuteOnResume;
     private ProgressDialog mProgressDialog;
 
     private int id;
@@ -71,6 +73,18 @@ public class MainCardViewCamera extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(shouldExecuteOnResume){
+            session.checkLogin();
+            ajouterCameras();
+        } else{
+            shouldExecuteOnResume = true;
+        }
+    }
+
     /**
      * OnCreate(), lancement de l'activité
      * */
@@ -78,8 +92,12 @@ public class MainCardViewCamera extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_recycler);
+        shouldExecuteOnResume = false;
         intent = getIntent();
         Log.d("debugId", "intent -> "+ intent);
+
+
+        final Activity context = this;
 
         if(intent != null) {
             final int id_local = intent.getIntExtra("id", -1);
@@ -89,7 +107,7 @@ public class MainCardViewCamera extends AppCompatActivity {
                 ((EditText) findViewById(R.id.editTextName)).setHint("Cour Interieur");
                 ((TextView) findViewById(R.id.textAddress)).setText("IP");
                 ((EditText) findViewById(R.id.editTextAddress)).setHint("http://vps814672.ovh.net/Data/videos/2020-05-10_23:54:27.123.mjpeg");
-
+                ((LinearLayout) findViewById(R.id.layoutNumero)).setVisibility(View.GONE);
                 buttonAjout = (Button) findViewById(R.id.buttonAdd);
                 //Méthode onClick() du bouton d'ajout d'une Caméra
                 buttonAjout.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +124,7 @@ public class MainCardViewCamera extends AppCompatActivity {
                 ((Button) findViewById(R.id.ajoutLocal)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        hideKeyboard(context);
                         if (ajouterCamera())//Si tout ok on cache
                             findViewById(R.id.addLocalLayout).setVisibility(View.GONE);
                     }
@@ -113,6 +132,7 @@ public class MainCardViewCamera extends AppCompatActivity {
                 ((Button) findViewById(R.id.retourAjoutLocal)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        hideKeyboard(context);
                         findViewById(R.id.addLocalLayout).setVisibility(View.GONE);
                     }
                 });
@@ -142,21 +162,8 @@ public class MainCardViewCamera extends AppCompatActivity {
                 //Adapter servira à remplir notre Recyclerview
                 adapter = new Adapter(cameras);
                 recyclerView.setAdapter(adapter);
-
-
             }
         }
-    }
-
-    /**
-     * onDestroy(), gère la destruction de l'activité
-     * Déconnecte l'utilisateur si l'activité est détruite via la session
-     * */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(!session.isLoggedIn())
-            session.deconnexionSession();
     }
 
     private boolean ajouterCamera(){

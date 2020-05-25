@@ -20,7 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CameraListView extends AppCompatActivity {
+public class CameraListView extends BaseActivity {
     public Activity context;
     public TableLayout mainTable;
     public CameraDBManager cameraAccess;

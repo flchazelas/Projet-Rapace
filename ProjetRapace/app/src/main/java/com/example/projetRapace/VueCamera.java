@@ -6,17 +6,21 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,15 +35,14 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
-public class VueCamera extends AppCompatActivity {
+public class VueCamera extends BaseActivity {
     private static final int MENU_QUIT = 1;
     private SessionManager session;
+    private boolean modif_camera_query_done;
+    private boolean modif_camera_query_result;
 
     /**
      * Création d'un menu d'Items dans la Barre du Haut de l'application
@@ -73,8 +76,8 @@ public class VueCamera extends AppCompatActivity {
     private boolean removeresult = false;
 
     private boolean CameraLoading = false;
-    private boolean VideosLoading = false;
-    private boolean ImagesLoading = false;
+
+    private Button buttonModif;
 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -83,157 +86,49 @@ public class VueCamera extends AppCompatActivity {
         if(intent != null) {
             setContentView(R.layout.maquette_gestion_camera);
 
+            // Lancement du Service de vérification de connexion
+            Intent intentSession = new Intent(VueCamera.this, RapaceService.class);
+            startService(intentSession);
+
+            // Lancement du Session Manager pour stocker l'utilisateur
+            session = new SessionManager(getApplicationContext());
+            session.checkLogin();
+
+            final Activity context = this;
+
             int id = intent.getIntExtra("id",-1);
             if(id != -1){
+                buttonModif = (Button) findViewById(R.id.boutonModifier);
+                //Méthode onClick() du bouton d'ajout d'une Caméra
+                buttonModif.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((EditText) findViewById(R.id.editTextName)).setText(c.getName());
+                        ((EditText) findViewById(R.id.editTextAddress)).setText(c.getIp());
+                        findViewById(R.id.modifCameraLayout).setVisibility(View.VISIBLE);
+                    }
+                });
+
+                ((Button) findViewById(R.id.validerModifCamera)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        hideKeyboard(context);
+                        if (modifierCamera())//Si tout ok on cache
+                            findViewById(R.id.modifCameraLayout).setVisibility(View.GONE);
+                    }
+                });
+                ((Button) findViewById(R.id.retourModifCamera)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        hideKeyboard(context);
+                        findViewById(R.id.modifCameraLayout).setVisibility(View.GONE);
+                    }
+                });
+                findViewById(R.id.modifCameraLayout).setVisibility(View.GONE);
+
                 loadPage(id);
             }
         }
-    }
-
-    public void cleanVideoScrollview(){
-        ((LinearLayout) findViewById(R.id.scrollVideo)).removeAllViews();
-    }
-
-    public void cleanImageScrollview(){
-        ((LinearLayout) findViewById(R.id.scrollImage)).removeAllViews();
-    }
-
-    private void fillVideoScrollview(ArrayList<Video> videoList){
-        LinearLayout layout = (LinearLayout) findViewById(R.id.scrollVideo);
-        for (Video v : videoList) {
-            String name = v.getChemin().split("/")[2];
-            final Activity context = this;
-            final Video video = v;
-            layout.addView(buildLine(name, "", v.getId(),
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(context, VideoView.class);
-
-                            intent.putExtra("ip", addr_serv + video.getChemin());
-                            startActivity(intent);
-                        }
-                    },
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mProgressDialog = ProgressDialog.show(context, "Removing", "Removing Selected Data ...");
-                            mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
-
-                            VideoDBManager.VideoDBCallbackInterface callbackVideo = new VideoDBManager.VideoDBCallbackInterface() {
-                                @Override
-                                public void onQueryFinished(String operation, String output) {
-                                    Log.d("VueCamera", "(onQueryFinished) -> "+ operation);
-                                    if(operation.equals(CameraDBManager.CAMERA_DB_REMOVE)){
-                                        try {
-                                            Log.d("VueCamera", "(remove Camera) -> "+ output);
-                                            if (mProgressDialog != null)
-                                                mProgressDialog.dismiss();
-
-                                            if(output.equals("REMOVE_SUCCESSFUL"))
-                                                loadPage(c.getId());
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                            };
-                            VideoDBManager.removeVideo(callbackVideo,video);
-                        }
-                    }
-            ));
-        }
-    }
-
-    private void fillImageScrollview(ArrayList<Image> imageList){
-        LinearLayout layout = (LinearLayout) findViewById(R.id.scrollImage);
-        for (Image i : imageList) {
-            //Log.d("VueCamera",i.getChemin().split("/")[2]);
-            String name = i.getChemin().split("/")[2];
-            final Activity context = this;
-            final Image image = i;
-            layout.addView(buildLine(name, "", i.getId(),
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(context, ImageViewActivity.class);
-
-                            intent.putExtra("ip", addr_serv + image.getChemin());
-                            startActivity(intent);
-                        }
-                    },
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mProgressDialog = ProgressDialog.show(context, "Removing", "Removing Selected Data ...");
-                            mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
-
-                            ImageDBManager.ImageDBCallbackInterface callbackVideo = new ImageDBManager.ImageDBCallbackInterface() {
-                                @Override
-                                public void onQueryFinished(String operation, String output) {
-                                    Log.d("VueCamera", "(onQueryFinished) -> "+ operation);
-                                    if(operation.equals(ImageDBManager.IMAGE_DB_REMOVE)){
-                                        try {
-                                            Log.d("VueCamera", "(remove Camera) -> "+ output);
-                                            if (mProgressDialog != null)
-                                                mProgressDialog.dismiss();
-
-                                            if(output.equals("REMOVE_SUCCESSFUL"))
-                                                loadPage(c.getId());
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                            };
-                            ImageDBManager.removeImage(callbackVideo,image);
-                        }
-                    }
-            ));
-        }
-    }
-
-    private LinearLayout buildLine(String name, String author, int id, ImageButton.OnClickListener viewListener, ImageButton.OnClickListener deleteListener){
-        LinearLayout ly = new LinearLayout(this);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT);
-        layoutParams.setMargins(5,5,5,5);
-        ly.setBackgroundColor(Color.rgb(150, 150, 150));
-        ly.setOrientation(LinearLayout.HORIZONTAL);
-        ly.setLayoutParams(layoutParams);
-
-        TextView nameTv = new TextView(this);
-        nameTv.setText(name);
-        nameTv.setPadding(10,10,0,0);
-        nameTv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-        ly.addView(nameTv);
-
-        if(author != ""){
-            TextView authorTv = new TextView(this);
-            authorTv.setText("capturée par "+ author);
-            authorTv.setPadding(0,0,75,0);
-            authorTv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-            authorTv.setTextSize(12);
-            authorTv.setTextAppearance(Typeface.ITALIC);
-            ly.addView(authorTv);
-        }
-
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-
-        ImageButton viewImgBut = new ImageButton(this);
-        viewImgBut.setLayoutParams(new LinearLayout.LayoutParams((int) metrics.density*15, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-        viewImgBut.setImageResource(R.drawable.view_icon);
-        viewImgBut.setColorFilter(Color.rgb(0, 0, 0), PorterDuff.Mode.SRC_ATOP);
-        viewImgBut.setOnClickListener(viewListener);
-        ly.addView(viewImgBut);
-
-        ImageButton deleteImgBut = new ImageButton(this);
-        deleteImgBut.setLayoutParams(new LinearLayout.LayoutParams((int) metrics.density*15, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-        deleteImgBut.setImageResource(R.drawable.delete_icon);
-        deleteImgBut.setColorFilter(Color.rgb(0, 0, 0), PorterDuff.Mode.SRC_ATOP);
-        deleteImgBut.setOnClickListener(deleteListener);
-        ly.addView(deleteImgBut);
-
-        return ly;
     }
 
     private void loadPage(int id){
@@ -243,9 +138,13 @@ public class VueCamera extends AppCompatActivity {
         mProgressDialog = ProgressDialog.show(this, "Downloading", "Downloading Data ...");
         mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
         CameraLoading = false;
-        VideosLoading = false;
-        ImagesLoading = false;
 
+        ((Button) findViewById(R.id.boutonRetour)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         CameraDBManager.CameraDBCallbackInterface callbackCamera = new CameraDBManager.CameraDBCallbackInterface() {
             @Override
@@ -261,14 +160,14 @@ public class VueCamera extends AppCompatActivity {
                         TextView tw = (TextView) findViewById(R.id.NomCamera);
                         tw.setText(c.getName());
 
-
-                        Picasso.get().load(c.getIp()).centerCrop().fit().into((ImageView) findViewById(R.id.previewDirect));
-
                         ((Button) findViewById(R.id.boutonSupprimer)).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 removedone = false;
                                 removeresult = false;
+
+                                mProgressDialog = ProgressDialog.show(context, "Downloading", "Downloading Data ...");
+                                mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
 
                                 final Camera cam = c;
 
@@ -296,13 +195,14 @@ public class VueCamera extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         while(!(removedone))
-                                            Log.d("VueCamera", "(Waiting for loading to endd) -> (CameraLoading : " + CameraLoading + "); (VideosLoading : " + VideosLoading + "); (ImagesLoading : " +ImagesLoading+")");
+                                            Log.d("VueCamera", "(Waiting for loading to endd) -> (CameraLoading : " + CameraLoading + ");");
 
-                                            context.runOnUiThread(new Runnable(){
+                                        context.runOnUiThread(new Runnable(){
                                             @Override
                                             public void run() {
-                                                if(removeresult)
+                                                if(removeresult){
                                                     finish();
+                                                }
                                                 if (mProgressDialog != null)
                                                     mProgressDialog.dismiss();
                                             }
@@ -313,7 +213,6 @@ public class VueCamera extends AppCompatActivity {
                                 checkLoading.start();
                             }
                         });
-
 
                         ((Button) findViewById(R.id.boutonDirect)).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -326,13 +225,6 @@ public class VueCamera extends AppCompatActivity {
                             }
                         });
 
-                        ((Button) findViewById(R.id.boutonRetour)).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                finish();
-                            }
-                        });
-
                         CameraLoading = true;
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -342,60 +234,15 @@ public class VueCamera extends AppCompatActivity {
         };
         CameraDBManager.getById(callbackCamera,id);
 
-        final ArrayList<Video> videoList = new ArrayList<Video>();
-        final ArrayList<Image> imageList = new ArrayList<Image>();;
-
-        VideoDBManager.VideoDBCallbackInterface callbackVideo = new VideoDBManager.VideoDBCallbackInterface() {
-            @Override
-            public void onQueryFinished(String operation, String output) {
-                Log.d("VueCamera", "(onQueryFinished) -> "+ operation);
-                if(operation.equals(VideoDBManager.VIDEO_DB_GETBYCAMERA)){
-                    try {
-                        Log.d("VueCamera", "(retour VIDEO_DB_GETBYCAMERA) -> " + output);
-                        videoList.addAll(Video.videosFromJSON(new JSONArray(output)));
-
-                        VideosLoading = true;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        VideoDBManager.getByCamera(callbackVideo,id);
-
-        ImageDBManager.ImageDBCallbackInterface callbackImage = new ImageDBManager.ImageDBCallbackInterface() {
-            @Override
-            public void onQueryFinished(String operation, String output) {
-                Log.d("VueCamera", "(onQueryFinished) -> "+ operation);
-                if(operation.equals(ImageDBManager.IMAGE_DB_GETBYCAMERA)){
-                    try {
-                        Log.d("VueCamera", "(retour IMAGE_DB_GETBYCAMERA) -> " + output);
-                        imageList.addAll(Image.imagesFromJSON(new JSONArray(output)));
-
-                        ImagesLoading = true;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-        ImageDBManager.getByCamera(callbackImage,id);
-
-        cleanVideoScrollview();
-        cleanImageScrollview();
-
         Thread checkLoading = new Thread(new Runnable(){
             @Override
             public void run() {
-                while(!(CameraLoading && VideosLoading && ImagesLoading))
-                    Log.d("VueCamera", "(Waiting for loading to endd) -> (CameraLoading : " + CameraLoading + "); (VideosLoading : " + VideosLoading + "); (ImagesLoading : " +ImagesLoading+")");
+                while(!(CameraLoading))
+                    Log.d("VueCamera", "(Waiting for loading to endd) -> (CameraLoading : " + CameraLoading+")");
 
                 context.runOnUiThread(new Runnable(){
                     @Override
                     public void run() {
-
-                        fillVideoScrollview(videoList);
-                        fillImageScrollview(imageList);
                         if (mProgressDialog != null)
                             mProgressDialog.dismiss();
                     }
@@ -404,5 +251,106 @@ public class VueCamera extends AppCompatActivity {
         });
 
         checkLoading.start();
+    }
+
+    private boolean modifierCamera(){
+        final Camera cam = this.c;
+        mProgressDialog = ProgressDialog.show(this, "Chargement...", " Ajout de la Camera ...");
+        mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
+
+        final Activity context = this;
+
+        String name = ((EditText) findViewById(R.id.editTextName)).getText().toString();
+        String address = ((EditText) findViewById(R.id.editTextAddress)).getText().toString();
+        if (name.equals("")) {
+            ((EditText) findViewById(R.id.editTextName)).setError("Veuillez choisir un nom de camera.");
+            if (mProgressDialog != null)
+                mProgressDialog.dismiss();
+            return false;
+        }if (address.equals("")) {
+            ((EditText) findViewById(R.id.editTextAddress)).setError("Veuillez choisir une adresse ip.");
+            if (mProgressDialog != null)
+                mProgressDialog.dismiss();
+            return false;
+        }
+
+        if(name.equals(cam.getName()) && address.equals(cam.getIp())){
+            if (mProgressDialog != null)
+                mProgressDialog.dismiss();
+
+            return true;
+        }
+
+        cam.setName(name);
+        cam.setIp(address);
+
+        modif_camera_query_done = false;
+        modif_camera_query_result = false;
+
+        CameraDBManager.CameraDBCallbackInterface callback = new CameraDBManager.CameraDBCallbackInterface() {
+            @Override
+            public void onQueryFinished(String operation, String output) {
+                Log.d("MainCardViewCamera", "(onQueryFinished) -> "+ operation);
+                if(operation.equals(CameraDBManager.CAMERA_DB_UPDATE)){
+                    try {
+                        Log.d("MainCardViewCamera", "(retour CAMERA_DB_UPDATE) -> "+ output);
+                        if(!output.equals("UPDATE_ERROR")){
+                            modif_camera_query_result = true;
+                            JSONObject jsonResult = new JSONObject(output);
+                            c = Camera.cameraFromJSON(jsonResult);
+                            Log.d("VueCamera", "(retour CAMERA_DB_UPDATE) -> "+ c);
+                        } else
+                            modif_camera_query_result = false;
+                        modif_camera_query_done = true;
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Erreur lors de l'ajout du Camera.\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        if(cam == null){
+            Toast.makeText(context, "Id de Local invalide.\nVeuillez réessayer ou relancer l'application.",Toast.LENGTH_LONG).show();
+            return false;
+        }
+        CameraDBManager.updateCamera(callback,cam);
+
+        Thread checkLoading = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                while(!(modif_camera_query_done))
+                    Log.d("MainCardViewCamera", "(Waiting for loading to end) -> (modif_camera_query_done : " + modif_camera_query_done + ")");
+
+                context.runOnUiThread(new Runnable(){
+                    @Override
+                    public void run() {
+                        if (mProgressDialog != null)
+                            mProgressDialog.dismiss();
+                        //affichage
+                        if(modif_camera_query_result){
+                            ((TextView) findViewById(R.id.NomCamera)).setText(c.getName());
+
+                            ((Button) findViewById(R.id.boutonDirect)).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(context, CameraView.class);
+
+                                    intent.putExtra("id", c.getId());
+                                    intent.putExtra("ip", c.getIp());
+                                    startActivity(intent);
+                                }
+                            });
+                        }
+                        else
+                            Toast.makeText(context, "Erreur lors de l'ajout du Camera.\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
+        checkLoading.start();
+
+        return true;
     }
 }

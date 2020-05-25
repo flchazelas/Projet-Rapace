@@ -2,6 +2,7 @@ package com.example.projetRapace;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -15,7 +16,7 @@ import android.widget.MediaController;
 
 import com.squareup.picasso.Picasso;
 
-public class ImageViewActivity extends AppCompatActivity {
+public class ImageViewActivity extends BaseActivity {
 
     private static final int MENU_QUIT = 1;
     private SessionManager session;
@@ -49,15 +50,24 @@ public class ImageViewActivity extends AppCompatActivity {
         super.onCreate(icicle);
         Intent intent = getIntent();
         setContentView(R.layout.activity_image_view);
-
+        final Activity context = this;
         ((Button) findViewById(R.id.boutonRetour)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(context, VueCamera.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
 
         if(intent != null) {
+            // Lancement du Service de vérification de connexion
+            intent = new Intent(ImageViewActivity.this, RapaceService.class);
+            startService(intent);
+
+            // Lancement du Session Manager pour stocker l'utilisateur
+            session = new SessionManager(getApplicationContext());
+            session.checkLogin();
 
             final String ip = intent.getStringExtra("ip");
             if (ip != null) {
