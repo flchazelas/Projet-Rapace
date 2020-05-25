@@ -2,12 +2,15 @@ package com.example.projetRapace;
 
 import java.util.HashMap;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 public class SessionManager {
+
+    private static SessionManager instance;
     // Shared Preferences
     SharedPreferences pref;
 
@@ -171,6 +174,12 @@ public class SessionManager {
      * Vérifie si Utilisateur est admin
      * **/
     public boolean isAdmin(){
-        return pref.getBoolean(IS_ADMIN, false);
+        return pref.getBoolean( IS_ADMIN, false);
+    }
+
+    public static SessionManager getInstance(Activity context) {
+        if(instance == null)
+            instance = new SessionManager(context);
+        return instance;
     }
 }

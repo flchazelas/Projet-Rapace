@@ -56,7 +56,7 @@ public class MainCardViewLocal extends BaseActivity {
      * */
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_QUIT, 0, R.string.logout);
-        if(session.isAdmin()) {
+        if(SessionManager.getInstance(this).isAdmin()) {
             menu.add(0, MENU_ADMIN, 0, R.string.user_administration);
         }
         menu.add(0, MENU_PROFIL, 0, R.string.user_profile);
@@ -72,7 +72,7 @@ public class MainCardViewLocal extends BaseActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
-                session.deconnexionSession();
+                SessionManager.getInstance(this).deconnexionSession();
                 finish();
                 return true;
 
@@ -99,7 +99,8 @@ public class MainCardViewLocal extends BaseActivity {
         super.onResume();
 
         if(shouldExecuteOnResume){
-            session.checkLogin();
+            SessionManager.getInstance(this).checkLogin();
+
             ajouterLocaux();
         } else{
             shouldExecuteOnResume = true;
@@ -140,13 +141,13 @@ public class MainCardViewLocal extends BaseActivity {
         findViewById(R.id.addLocalLayout).setVisibility(View.GONE);
         buttonAjout = (Button)findViewById(R.id.buttonAdd);
 
-        // Lancement du Service de vérification de connexion
-        intent = new Intent(MainCardViewLocal.this, RapaceService.class);
-        startService(intent);
-        // Lancement du Session Manager pour stocker l'utilisateur
-        session = new SessionManager(getApplicationContext());
-        //Vérifie si l'utilisateur est connecté
-        session.checkLogin();
+//        // Lancement du Service de vérification de connexion
+//        intent = new Intent(MainCardViewLocal.this, RapaceService.class);
+//        startService(intent);
+//        // Lancement du Session Manager pour stocker l'utilisateur
+//        session = new SessionManager(getApplicationContext());
+//        //Vérifie si l'utilisateur est connecté
+        SessionManager.getInstance(this).checkLogin();
 
         //Ajout d'un local fictif
         ajouterLocaux();
@@ -206,7 +207,9 @@ public class MainCardViewLocal extends BaseActivity {
                         fetch_locals_query_result = true;
                         fetch_locals_query_done = true;
                     } catch (Exception e) {
-                        Toast.makeText(context, "Erreur lors de la récupération des locaux.\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Erreur lors de la récupération des locaux (JSON convert).\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
+                        fetch_locals_query_result = false;
+                        fetch_locals_query_done = true;
                         e.printStackTrace();
                     }
                 }
@@ -216,8 +219,12 @@ public class MainCardViewLocal extends BaseActivity {
             Toast.makeText(context, "Session invalide.\nVeuillez réessayer ou relancer l'application.",Toast.LENGTH_LONG).show();
             return;
         }*/
-        session.checkLogin();
-        LocalDBManager.getByUser(callback, Integer.parseInt(session.getDonneesSession().get(SessionManager.KEY_ID)));
+        //session.checkLogin();
+
+        SessionManager.getInstance(this).checkLogin();
+        Log.i("onResume", "id = " + Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
+        Log.i("onResume", "id = " + SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO));
+        LocalDBManager.getByUser(callback, Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
 
         Thread checkLoading = new Thread(new Runnable(){
             @Override
@@ -234,7 +241,7 @@ public class MainCardViewLocal extends BaseActivity {
                         if(fetch_locals_query_result)
                             adapterCardView.notifyDataSetChanged();
                         else
-                            Toast.makeText(context, "Erreur lors de la récupération des locaux.\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Erreur lors de la récupération des locaux (JSON convert).\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -298,17 +305,11 @@ public class MainCardViewLocal extends BaseActivity {
                 }
             }
         };
-        Local v = new Local(name,address);
-        Log.d("saveRecord", "(retour USER_ID) -> "+ session.getDonneesSession().get(SessionManager.KEY_ID));
+        Local v = new Local(name,address,number);
+        Log.d("saveRecord", "(retour USER_ID) -> "+ SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID));
 
-        /*
-        if(session.user_id ==-1){
-
-            Toast.makeText(context, "Session invalide.\nVeuillez réessayer ou relancer l'application.",Toast.LENGTH_LONG).show();
-            return false;
-        }*/
-        session.checkLogin();
-        LocalDBManager.addLocal(callback,v, Integer.parseInt(session.getDonneesSession().get(SessionManager.KEY_ID)));
+        SessionManager.getInstance(this).checkLogin();
+        LocalDBManager.addLocal(callback,v, Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
 
         Thread checkLoading = new Thread(new Runnable(){
             @Override

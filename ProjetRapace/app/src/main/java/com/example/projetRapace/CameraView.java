@@ -36,6 +36,7 @@ public class CameraView extends BaseActivity {
     private MjpegView mv;
     private static final int MENU_QUIT = 1;
     private SessionManager session;
+    private Intent intentSession;
 
     /**
      * Création d'un menu d'Items dans la Barre du Haut de l'application
@@ -67,7 +68,7 @@ public class CameraView extends BaseActivity {
         if(intent != null) {
 
             // Lancement du Service de vérification de connexion
-            Intent intentSession = new Intent(CameraView.this, RapaceService.class);
+            intentSession = new Intent(CameraView.this, RapaceService.class);
             startService(intentSession);
 
             // Lancement du Session Manager pour stocker l'utilisateur

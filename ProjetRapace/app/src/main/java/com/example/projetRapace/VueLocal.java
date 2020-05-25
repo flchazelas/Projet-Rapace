@@ -35,6 +35,7 @@ import java.util.ArrayList;
 public class VueLocal extends BaseActivity {
     private static final int MENU_QUIT = 1;
     private SessionManager session;
+    private Intent intentSession;
 
     /**
      * Création d'un menu d'Items dans la Barre du Haut de l'application
@@ -79,13 +80,15 @@ public class VueLocal extends BaseActivity {
         if(intent != null) {
             int id = intent.getIntExtra("id",-1);
 
-            // Lancement du Service de vérification de connexion
-            intent = new Intent(VueLocal.this, RapaceService.class);
-            startService(intent);
+//            // Lancement du Service de vérification de connexion
+//            intent = new Intent(VueLocal.this, RapaceService.class);
+//            startService(intent);
+//
+//            // Lancement du Session Manager pour stocker l'utilisateur
+//            session = new SessionManager(getApplicationContext());
+//            session.checkLogin();
 
-            // Lancement du Session Manager pour stocker l'utilisateur
-            session = new SessionManager(getApplicationContext());
-            session.checkLogin();
+            SessionManager.getInstance(this).checkLogin();
 
             if(id != -1){
                 id_local = id;
@@ -124,6 +127,7 @@ public class VueLocal extends BaseActivity {
                 ((Button) findViewById(R.id.buttonRetour)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Log.i("finish", "id = " + Integer.parseInt(SessionManager.getInstance(context).getDonneesSession().get(SessionManager.KEY_ID)));
                         finish();
                     }
                 });
