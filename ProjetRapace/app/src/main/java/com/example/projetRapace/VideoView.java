@@ -49,6 +49,7 @@ public class VideoView extends BaseActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
+                session.deconnexionSession();
                 finish();
                 return true;
         }
@@ -92,4 +93,11 @@ public class VideoView extends BaseActivity {
             }
         }
     }
+
+    /*
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        session.deconnexionSession();
+    }*/
 }

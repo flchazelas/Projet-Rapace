@@ -12,7 +12,7 @@ import com.example.projetRapace.Local.Local;
 
 import java.util.List;
 
-public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
+public class AdapterCardView extends RecyclerView.Adapter<MyViewHolder> {
 
     List<Object> list;
 
@@ -20,7 +20,7 @@ public class Adapter extends RecyclerView.Adapter<MyViewHolder> {
      * Ajouter un constructeur prenant en entrée une liste d'Objects
      * L'adaptateur fait le lien entre le RecyclerView et Les CardViews
      * */
-    public Adapter(List<Object> list) {
+    public AdapterCardView(List<Object> list) {
         this.list = list;
     }
 

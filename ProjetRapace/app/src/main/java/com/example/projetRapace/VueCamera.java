@@ -62,6 +62,7 @@ public class VueCamera extends BaseActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
+                session.deconnexionSession();
                 finish();
                 return true;
         }

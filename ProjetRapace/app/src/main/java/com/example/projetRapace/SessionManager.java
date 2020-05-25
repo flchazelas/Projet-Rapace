@@ -34,7 +34,12 @@ public class SessionManager {
     // DateAccess Utilisateur
     public static final String KEY_DATE = "date";
 
-    public static int user_id = -1;
+    // ID
+    public static final String KEY_ID = "id";
+    //public static int user_id = -1;
+
+    // Boolean IsAdmin
+    public static final String IS_ADMIN = "IsAdmin";
 
     // Constructeur
     public SessionManager(Context context){
@@ -46,7 +51,7 @@ public class SessionManager {
     /**
      * Crée la Session
      * */
-    public void creationLoginSession(String pseudo, String dateNow, int user_id){
+    public void creationLoginSession(String pseudo, String dateNow, int user_id, boolean isAdmin){
         // Mais le boolean IS_Logged à true
         editor.putBoolean(IS_LOGGED, true);
 
@@ -56,7 +61,12 @@ public class SessionManager {
         // Stock la date
         editor.putString(KEY_DATE, dateNow);
 
-        this.user_id = user_id;
+        //Stock l'id
+        editor.putInt(KEY_ID, user_id);
+        //this.user_id = user_id;
+
+        //Stock si admin
+        editor.putBoolean(IS_ADMIN, isAdmin);
 
         // prend en compte les changements
         editor.commit();
@@ -93,6 +103,8 @@ public class SessionManager {
 
         utilisateur.put(KEY_DATE, pref.getString(KEY_DATE, null));
 
+        utilisateur.put(KEY_ID, String.valueOf(pref.getInt(KEY_ID, 0)));
+
         return utilisateur;
     }
 
@@ -102,7 +114,6 @@ public class SessionManager {
     public void deconnexionSession(){
 
         editor.putBoolean(IS_LOGGED, false);
-        user_id = -1;
         editor.commit();
 
         // Redirection vers MainConnexion
@@ -118,11 +129,22 @@ public class SessionManager {
     }
 
     /**
-     * Modifie les données en Session
+     * Modifie la dateAccès en Session
      * */
-    public void setDonneesSession(String date){
+    public void setData(String date){
         // Stock la date
         editor.putString(KEY_DATE, date);
+
+        // prend en compte les changements
+        editor.commit();
+    }
+
+    /**
+     * Modifie le pseudo en Session
+     * */
+    public void setPseudo(String pseudo){
+        // Stock la date
+        editor.putString(KEY_PSEUDO, pseudo);
 
         // prend en compte les changements
         editor.commit();
@@ -143,5 +165,12 @@ public class SessionManager {
      * **/
     public boolean isLoggedIn(){
         return pref.getBoolean(IS_LOGGED, false);
+    }
+
+    /**
+     * Vérifie si Utilisateur est admin
+     * **/
+    public boolean isAdmin(){
+        return pref.getBoolean(IS_ADMIN, false);
     }
 }

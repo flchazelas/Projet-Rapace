@@ -1,10 +1,12 @@
 package com.example.projetRapace;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,9 +42,13 @@ public class MainCardViewLocal extends BaseActivity {
     private SessionManager session;
     private Button buttonAjout;
     private Intent intent;
-    private Adapter adapter;
+    private AdapterCardView adapterCardView;
 
     private static final int MENU_QUIT = 1;
+    private static final int MENU_ADMIN = 2;
+    private static final int MENU_PROFIL = 3;
+
+    private static final int CODE_ACTIVITY = 1;
 
     /**
      * Création d'un menu d'Items dans la Barre du Haut de l'application
@@ -50,6 +56,10 @@ public class MainCardViewLocal extends BaseActivity {
      * */
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_QUIT, 0, R.string.logout);
+        if(session.isAdmin()) {
+            menu.add(0, MENU_ADMIN, 0, R.string.user_administration);
+        }
+        menu.add(0, MENU_PROFIL, 0, R.string.user_profile);
         return true;
     }
 
@@ -62,7 +72,23 @@ public class MainCardViewLocal extends BaseActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
+                session.deconnexionSession();
                 finish();
+                return true;
+
+            case MENU_ADMIN:
+
+                //redirection vers MainAdministrationUtilisateur
+                intent = new Intent(MainCardViewLocal.this, MainAdministrationUtilisateur.class);
+                startActivity(intent);
+                return true;
+
+            case MENU_PROFIL:
+
+                //redirection vers MainModificationUtilisateur
+                intent = new Intent(MainCardViewLocal.this, MainModificationUtilisateur.class);
+                intent.putExtra("PSEUDO", session.getDonneesSession().get(SessionManager.KEY_PSEUDO));
+                startActivityForResult(intent, CODE_ACTIVITY);
                 return true;
         }
         return false;
@@ -90,6 +116,11 @@ public class MainCardViewLocal extends BaseActivity {
         shouldExecuteOnResume = false;
 
         final Activity context = this;
+
+        //Lancement de la notification
+        NotificationHelper notificationHelper = new NotificationHelper(MainCardViewLocal.this);
+        notificationHelper.notify(1, false, "My title", "My content" );
+        Log.i("MainActivity", "Notification launched");
 
         ((Button)findViewById(R.id.ajoutLocal)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,13 +157,13 @@ public class MainCardViewLocal extends BaseActivity {
         //définit l'agencement des cellules, ici de façon verticale, comme une ListView
         //recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        //pour adapter en grille comme un RecyclerView, avec 2 cellules par ligne
+        //pour adapterCardView en grille comme un RecyclerView, avec 2 cellules par ligne
         recyclerView.setLayoutManager(new GridLayoutManager(this,2));
 
-        //Création d'un Adapter, lui fournir notre liste de Locaux.
-        //Adapter servira à remplir notre Recyclerview
-        adapter = new Adapter(locaux);
-        recyclerView.setAdapter(adapter);
+        //Création d'un AdapterCardView, lui fournir notre liste de Locaux.
+        //AdapterCardView servira à remplir notre Recyclerview
+        adapterCardView = new AdapterCardView(locaux);
+        recyclerView.setAdapter(adapterCardView);
 
         //Méthode onClick() du bouton d'ajout d'un Local
         buttonAjout.setOnClickListener(new View.OnClickListener() {
@@ -181,11 +212,12 @@ public class MainCardViewLocal extends BaseActivity {
                 }
             }
         };
-        if(session.user_id ==-1){
+        /*if(session.user_id ==-1){
             Toast.makeText(context, "Session invalide.\nVeuillez réessayer ou relancer l'application.",Toast.LENGTH_LONG).show();
             return;
-        }
-        LocalDBManager.getByUser(callback,session.user_id);
+        }*/
+        session.checkLogin();
+        LocalDBManager.getByUser(callback, Integer.parseInt(session.getDonneesSession().get(SessionManager.KEY_ID)));
 
         Thread checkLoading = new Thread(new Runnable(){
             @Override
@@ -200,7 +232,7 @@ public class MainCardViewLocal extends BaseActivity {
                             mProgressDialog.dismiss();
                         //affichage
                         if(fetch_locals_query_result)
-                            adapter.notifyDataSetChanged();
+                            adapterCardView.notifyDataSetChanged();
                         else
                             Toast.makeText(context, "Erreur lors de la récupération des locaux.\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
                     }
@@ -211,16 +243,18 @@ public class MainCardViewLocal extends BaseActivity {
         checkLoading.start();
     }
 
+
     /**
      * onDestroy(), gère la destruction de l'activité
      * Déconnecte l'utilisateur si l'activité est détruite via la session
      * */
+    /*
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if(!session.isLoggedIn())
             session.deconnexionSession();
-    }
+    }*/
 
     private boolean ajouterLocal(){
         mProgressDialog = ProgressDialog.show(this, "Chargement...", " Ajout du Local ...");
@@ -264,15 +298,17 @@ public class MainCardViewLocal extends BaseActivity {
                 }
             }
         };
-        Local v = new Local(name,address,number);
-        Log.d("saveRecord", "(retour USER_ID) -> "+ session.user_id);
+        Local v = new Local(name,address);
+        Log.d("saveRecord", "(retour USER_ID) -> "+ session.getDonneesSession().get(SessionManager.KEY_ID));
 
+        /*
         if(session.user_id ==-1){
 
             Toast.makeText(context, "Session invalide.\nVeuillez réessayer ou relancer l'application.",Toast.LENGTH_LONG).show();
             return false;
-        }
-        LocalDBManager.addLocal(callback,v,session.user_id);
+        }*/
+        session.checkLogin();
+        LocalDBManager.addLocal(callback,v, Integer.parseInt(session.getDonneesSession().get(SessionManager.KEY_ID)));
 
         Thread checkLoading = new Thread(new Runnable(){
             @Override

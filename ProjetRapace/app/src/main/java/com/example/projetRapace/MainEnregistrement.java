@@ -20,9 +20,11 @@ public class MainEnregistrement extends BaseActivity {
 
     private TextView textPseudo;
     private TextView textMdp;
+    private TextView textNum;
     private EditText editPseudo;
     private EditText editMdp;
     private EditText editMdpConfirm;
+    private EditText editNum;
     private Button buttonValider;
     private SessionManager session;
     private Utilisateur utilisateur;
@@ -40,6 +42,7 @@ public class MainEnregistrement extends BaseActivity {
         //textMdp = (TextView)findViewById(R.id.textRenduMdp);
         editPseudo = (EditText)findViewById(R.id.pseudo);
         editMdp = (EditText)findViewById(R.id.password);
+        editNum = (EditText)findViewById(R.id.numTel);
         editMdpConfirm = (EditText)findViewById(R.id.password_confirm);
         buttonValider = (Button)findViewById(R.id.buttonValidate);
 
@@ -53,6 +56,7 @@ public class MainEnregistrement extends BaseActivity {
                 String pseudo = editPseudo.getText().toString();
                 String mdp = editMdp.getText().toString();
                 String mdp_confirm = editMdpConfirm.getText().toString();
+                int num = Integer.parseInt(editNum.getText().toString());
                 if(!mdp.equals(mdp_confirm)){
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainEnregistrement.this);
 
@@ -69,7 +73,7 @@ public class MainEnregistrement extends BaseActivity {
                     alertDialog.show();
                 }
                 else{
-                    utilisateur = new Utilisateur(pseudo, mdp);
+                    utilisateur = new Utilisateur(0, pseudo, mdp, num);
                     m.envoi("ajout", utilisateur.convertionJSONArray());
                 }
             }
@@ -80,7 +84,7 @@ public class MainEnregistrement extends BaseActivity {
         Date now = new Date();
         SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         String dateFormatee = format.format(now);
-        session.creationLoginSession(utilisateur.getPseudo_utilisateur(), dateFormatee,utilisateur.getId_utilisateur());
+        session.creationLoginSession(utilisateur.getPseudo_utilisateur(), dateFormatee,utilisateur.getId_utilisateur(), false);
 
         Intent intentVueCamera = new Intent(this, MainCardViewLocal.class);
         startActivity(intentVueCamera);

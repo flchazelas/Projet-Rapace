@@ -54,6 +54,7 @@ public class VueLocal extends BaseActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
+                session.deconnexionSession();
                 finish();
                 return true;
         }
@@ -446,4 +447,10 @@ public class VueLocal extends BaseActivity {
 
         return true;
     }
+    /*
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        session.deconnexionSession();
+    }*/
 }

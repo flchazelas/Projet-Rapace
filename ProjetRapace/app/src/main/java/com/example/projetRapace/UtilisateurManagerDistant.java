@@ -8,6 +8,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UtilisateurManagerDistant implements AsyncReponse{
 
     private Context context;
@@ -65,7 +68,9 @@ public class UtilisateurManagerDistant implements AsyncReponse{
                     String pseudo = info.getString("username");
                     String mdp = info.getString("password");
                     int id = info.getInt("id");
-                    Utilisateur utilisateur = new Utilisateur(id,pseudo, mdp);
+                    int isActif = info.getInt("isActif");
+                    int isAdmin = info.getInt("isAdmin");
+                    Utilisateur utilisateur = new Utilisateur(id, pseudo, mdp, isAdmin, isActif);
 
                     //Affiche l'utilisateur dans la console et redirection
                     Log.d("utilisateur", "---------------"+utilisateur.getPseudo_utilisateur());
@@ -102,6 +107,122 @@ public class UtilisateurManagerDistant implements AsyncReponse{
                     Log.d("Erreur", "Erreur de connexion!");
                 }
 
+            }
+
+            //Récup tous les utilisateurs en BDD sauf celui effectuant la requête,
+            //redirection vers la méthode affichage() de MainAdministrationUtilisateur
+            //Sinon Affiche Erreur de conversion JSON
+            else if(msg[0].equals("recupUtilisateurs")){
+                Log.d("RécupUtilisateurs", "---------------"+msg[1]);
+                if(!msg[1].equals("Erreur connexion !")) {
+                    try {
+                        //String[] s = new String[msg.length-1];
+                        List<Utilisateur> listeU = new ArrayList<>();
+                        for (int i=1; i<msg.length; i++){
+                            //Décode le msg reçut du retour de la requête en String
+                            JSONObject info = new JSONObject(msg[i]);
+                            //s[i-1] = info.getString("username");
+
+                            String pseudo = info.getString("username");
+                            String mdp = info.getString("password");
+                            int id = info.getInt("id");
+                            int isActif = info.getInt("isActif");
+                            int isAdmin = info.getInt("isAdmin");
+                            Utilisateur utilisateur = new Utilisateur(id, pseudo, mdp, isAdmin, isActif);
+                            listeU.add(utilisateur);
+                        }
+
+                        ((MainAdministrationUtilisateur) context).affichage(listeU);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Log.d("Erreur", "Erreur de connexion!");
+                }
+            }
+
+            //Récup l'utilisateur demandé en BDD,
+            //redirection vers la méthode affichage() de MainModificationUtilisateur
+            //Sinon Affiche Erreur de conversion JSON
+            else if(msg[0].equals("recupUtilisateur")){
+                Log.d("RécupUtilisateur", "---------------"+msg[1]);
+                if(!msg[1].equals("Erreur connexion !")) {
+                    try {
+                        //Décode le msg reçut du retour de la requête en String
+                        JSONObject info = new JSONObject(msg[1]);
+                        //s[i-1] = info.getString("username");
+
+                        String pseudo = info.getString("username");
+                        String mdp = info.getString("password");
+                        int id = info.getInt("id");
+                        int isActif = info.getInt("isActif");
+                        int isAdmin = info.getInt("isAdmin");
+                        Utilisateur utilisateur = new Utilisateur(id, pseudo, mdp, isAdmin, isActif);
+
+                        ((MainModificationUtilisateur) context).affichage(utilisateur);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Log.d("Erreur", "Erreur de connexion!");
+                }
+
+            }
+
+            //Désactivation de l'Utilisateur
+            //lancement de la requête recupUtilisateurs
+            else if(msg[0].equals("changeIsActif")){
+                Log.d("ChangeIsActif", "---------------"+msg[1]);
+                SessionManager session = new SessionManager(context);
+                String pseudo = session.getDonneesSession().get(SessionManager.KEY_PSEUDO);
+                Utilisateur u = new Utilisateur(pseudo, "password");
+                this.envoi("recupUtilisateurs", u.convertionJSONArray());
+            }
+
+            //Utilisateur passe en Admin
+            //lancement de la requête recupUtilisateurs
+            else if(msg[0].equals("changeIsAdmin")){
+                Log.d("ChangeIsAdmin", "---------------"+msg[1]);
+                SessionManager session = new SessionManager(context);
+                String pseudo = session.getDonneesSession().get(SessionManager.KEY_PSEUDO);
+                Utilisateur u = new Utilisateur(pseudo, "password");
+                this.envoi("recupUtilisateurs", u.convertionJSONArray());
+            }
+
+            //Update du profil d'un Utilisateur,
+            //redirection vers la méthode xhangements() de l'activité MainModifiationUtilisateur
+            if(msg[0].equals("updateProfil")){
+                if(!msg[1].equals("Erreur update !")) {
+                    Log.d("UpdateProfil", "---------------"+msg[1]);
+                    try {
+                        //Décode le msg reçut du retour de la requête en String
+                        JSONObject info = new JSONObject(msg[1]);
+                        String pseudo = info.getString("username");
+                        String mdp = info.getString("password");
+                        int id = info.getInt("id");
+                        int isActif = info.getInt("isActif");
+                        int isAdmin = info.getInt("isAdmin");
+                        Utilisateur utilisateur = new Utilisateur(id, pseudo, mdp, isAdmin, isActif);
+                        ((MainModificationUtilisateur) context).changements(utilisateur);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Log.d("Erreur", "Erreur de Update !");
+                }
+            }
+
+            //Déconnexion de l'Utilisateur
+            //redirection vers la méthode clear() du Service RapaceService
+            else if(msg[0].equals("supprimerUtilisateur")){
+                Log.d("SupprimerUtilisateur", "---------------"+msg[1]);
+                SessionManager session = new SessionManager(context);
+                String pseudo = session.getDonneesSession().get(SessionManager.KEY_PSEUDO);
+                Utilisateur u = new Utilisateur(pseudo, "password");
+                this.envoi("recupUtilisateurs", u.convertionJSONArray());
             }
 
             //Si erreur, l'affiche dans la console
