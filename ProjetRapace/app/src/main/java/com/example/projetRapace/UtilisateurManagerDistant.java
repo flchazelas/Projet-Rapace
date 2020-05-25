@@ -45,7 +45,7 @@ public class UtilisateurManagerDistant implements AsyncReponse{
             //redirection vers la méthode vérifConnexion() de l'activité MainEnregistrement
             //Sinon Affiche Erreur de connexion et redirection vers la méthode echecConnexion() de la même activité
             if(msg[0].equals("enregistrement")){
-                Log.d("enregistrement", "---------------"+msg[1]);
+                Log.d("Enregistrement", "---------------"+msg[1]);
                 if(!msg[1].equals("Erreur connexion !")) {
                     ((MainEnregistrement) context).verifConnexion();
                 }
@@ -175,7 +175,7 @@ public class UtilisateurManagerDistant implements AsyncReponse{
             //lancement de la requête recupUtilisateurs
             else if(msg[0].equals("changeIsActif")){
                 Log.d("ChangeIsActif", "---------------"+msg[1]);
-                SessionManager session = new SessionManager(context);
+                SessionManager session = SessionManager.getInstance(context);
                 String pseudo = session.getDonneesSession().get(SessionManager.KEY_PSEUDO);
                 Utilisateur u = new Utilisateur(pseudo, "password");
                 this.envoi("recupUtilisateurs", u.convertionJSONArray());
@@ -185,7 +185,7 @@ public class UtilisateurManagerDistant implements AsyncReponse{
             //lancement de la requête recupUtilisateurs
             else if(msg[0].equals("changeIsAdmin")){
                 Log.d("ChangeIsAdmin", "---------------"+msg[1]);
-                SessionManager session = new SessionManager(context);
+                SessionManager session = SessionManager.getInstance(context);
                 String pseudo = session.getDonneesSession().get(SessionManager.KEY_PSEUDO);
                 Utilisateur u = new Utilisateur(pseudo, "password");
                 this.envoi("recupUtilisateurs", u.convertionJSONArray());
@@ -219,7 +219,7 @@ public class UtilisateurManagerDistant implements AsyncReponse{
             //redirection vers la méthode clear() du Service RapaceService
             else if(msg[0].equals("supprimerUtilisateur")){
                 Log.d("SupprimerUtilisateur", "---------------"+msg[1]);
-                SessionManager session = new SessionManager(context);
+                SessionManager session = SessionManager.getInstance(context);
                 String pseudo = session.getDonneesSession().get(SessionManager.KEY_PSEUDO);
                 Utilisateur u = new Utilisateur(pseudo, "password");
                 this.envoi("recupUtilisateurs", u.convertionJSONArray());

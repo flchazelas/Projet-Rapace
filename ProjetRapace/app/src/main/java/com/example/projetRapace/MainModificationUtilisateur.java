@@ -54,7 +54,7 @@ public class MainModificationUtilisateur extends AppCompatActivity {
     }
 
     public void changements(Utilisateur utilisateur){
-        SessionManager session = new SessionManager(getApplicationContext());
+        SessionManager session = SessionManager.getInstance(this);
         if(Integer.valueOf(session.getDonneesSession().get(SessionManager.KEY_ID)) == utilisateur.getId_utilisateur()){
             session.setPseudo(utilisateur.getPseudo_utilisateur());
         }

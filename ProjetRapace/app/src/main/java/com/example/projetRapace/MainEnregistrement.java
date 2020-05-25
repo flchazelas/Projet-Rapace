@@ -36,7 +36,7 @@ public class MainEnregistrement extends BaseActivity {
         setContentView(R.layout.activity_enregistrement);
 
         // Session Manager
-        session = new SessionManager(getApplicationContext());
+        session = SessionManager.getInstance(this);
         //Toast.makeText(getApplicationContext(), "User Login Status: " + session.isLoggedIn(), Toast.LENGTH_LONG).show();
 
         //textPseudo = (TextView)findViewById(R.id.textRenduPseudo);
@@ -74,7 +74,10 @@ public class MainEnregistrement extends BaseActivity {
                     alertDialog.show();
                 }
                 else{
-                    utilisateur = new Utilisateur(0, pseudo, mdp, num);
+                    SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+                    Date now = new Date();
+                    String dateFormatee = format.format(now);
+                    utilisateur = new Utilisateur(0, pseudo, mdp, num, 0, 1, dateFormatee, dateFormatee);
                     m.envoi("ajout", utilisateur.convertionJSONArray());
                 }
             }
@@ -82,14 +85,15 @@ public class MainEnregistrement extends BaseActivity {
     }
 
     public void verifConnexion(){
-        Date now = new Date();
+        /*Date now = new Date();
         SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         String dateFormatee = format.format(now);
         session.creationLoginSession(utilisateur.getPseudo_utilisateur(), dateFormatee,utilisateur.getId_utilisateur(), false);
 
         Intent intentVueCamera = new Intent(this, MainCardViewLocal.class);
-        startActivity(intentVueCamera);
+        startActivity(intentVueCamera);*/
+        finish();
     }
 
     public void echecConnexion(){

@@ -100,7 +100,6 @@ public class MainCardViewLocal extends BaseActivity {
 
         if(shouldExecuteOnResume){
             startService(intentSession);
-            SessionManager.getInstance(this).checkLogin();
 
             ajouterLocaux();
         } else{
@@ -146,7 +145,6 @@ public class MainCardViewLocal extends BaseActivity {
         intentSession = new Intent(MainCardViewLocal.this, RapaceService.class);
         startService(intentSession);
         //Vérifie si l'utilisateur est connecté
-        SessionManager.getInstance(this).checkLogin();
 
         //Ajout d'un local fictif
         ajouterLocaux();
@@ -170,7 +168,6 @@ public class MainCardViewLocal extends BaseActivity {
             @Override
             public void onClick(View view) {
                 //Check si connecté et relance le service
-                SessionManager.getInstance(context).checkLogin();
 
                 findViewById(R.id.addLocalLayout).setVisibility(View.VISIBLE);
             }
@@ -219,7 +216,6 @@ public class MainCardViewLocal extends BaseActivity {
         }*/
         //session.checkLogin();
 
-        SessionManager.getInstance(this).checkLogin();
         Log.i("onResume", "id = " + Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
         Log.i("onResume", "id = " + SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO));
         LocalDBManager.getByUser(callback, Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
@@ -257,8 +253,7 @@ public class MainCardViewLocal extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(!SessionManager.getInstance(this).isLoggedIn())
-            SessionManager.getInstance(this).deconnexionSession();
+        SessionManager.getInstance(this).deconnexionSession();
     }
 
     private boolean ajouterLocal(){
@@ -306,7 +301,6 @@ public class MainCardViewLocal extends BaseActivity {
         Local v = new Local(name,address,number);
         Log.d("saveRecord", "(retour USER_ID) -> "+ SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID));
 
-        SessionManager.getInstance(this).checkLogin();
         LocalDBManager.addLocal(callback,v, Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
 
         Thread checkLoading = new Thread(new Runnable(){

@@ -15,6 +15,8 @@
 				//$mdp = $donnee[1];
 				$mdp = password_hash($donnee[1], PASSWORD_BCRYPT);
 				$num = $donnee[5];
+				$dateAccess = $donnee[6];
+				list($annee, $mois, $jour, $heure, $minute, $seconde) = sscanf($dateAccess, "$d-%d-%d %d:%d:%d");
 
 				//insertion BDD
 				print ("enregistrement%");
@@ -30,7 +32,7 @@
 				}
 				else{
 					$requete = "INSERT INTO users(username, password, dataAccess, isLogged, isAdmin, isActif, numTel, dataCreate)";
-					$requete .= "VALUES ('$pseudo', '$mdp', NOW(), 0, 0, 1, '$num', NOW())";
+					$requete .= "VALUES ('$pseudo', '$mdp', '$dateAccess', 0, 0, 1, '$num', '$dateAccess')";
 					print($requete);
 					$req = $connexion->prepare($requete);
 					$req->execute();
@@ -147,11 +149,13 @@
 				$donnees = $_REQUEST["donnees"];
 				$donnee = json_decode($donnees);
 				$pseudo = $donnee[0];
+				$dateAccess = $donnee[6];
+				list($annee, $mois, $jour, $heure, $minute, $seconde) = sscanf($dateAccess, "$d-%d-%d %d:%d:%d");
 
 				//recherche de l'utilisateur en BDD
 				print ("changeDate%");
 				$connexion = connexionPDO();
-				$requete = "UPDATE users SET dataAccess = NOW() WHERE username='$pseudo'";
+				$requete = "UPDATE users SET dataAccess = '$dateAccess' WHERE username='$pseudo'";
 				$req = $connexion->prepare($requete);
 				$req->execute();
 
