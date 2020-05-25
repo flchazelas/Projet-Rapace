@@ -39,9 +39,9 @@ public class MainCardViewLocal extends BaseActivity {
     private RecyclerView recyclerView;
 
     private List<Object> locaux = new ArrayList<Object>();
-    private SessionManager session;
     private Button buttonAjout;
     private Intent intent;
+    private Intent intentSession;
     private AdapterCardView adapterCardView;
 
     private static final int MENU_QUIT = 1;
@@ -87,7 +87,7 @@ public class MainCardViewLocal extends BaseActivity {
 
                 //redirection vers MainModificationUtilisateur
                 intent = new Intent(MainCardViewLocal.this, MainModificationUtilisateur.class);
-                intent.putExtra("PSEUDO", session.getDonneesSession().get(SessionManager.KEY_PSEUDO));
+                intent.putExtra("PSEUDO", SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO));
                 startActivityForResult(intent, CODE_ACTIVITY);
                 return true;
         }
@@ -99,6 +99,7 @@ public class MainCardViewLocal extends BaseActivity {
         super.onResume();
 
         if(shouldExecuteOnResume){
+            startService(intentSession);
             SessionManager.getInstance(this).checkLogin();
 
             ajouterLocaux();
@@ -141,12 +142,10 @@ public class MainCardViewLocal extends BaseActivity {
         findViewById(R.id.addLocalLayout).setVisibility(View.GONE);
         buttonAjout = (Button)findViewById(R.id.buttonAdd);
 
-//        // Lancement du Service de vérification de connexion
-//        intent = new Intent(MainCardViewLocal.this, RapaceService.class);
-//        startService(intent);
-//        // Lancement du Session Manager pour stocker l'utilisateur
-//        session = new SessionManager(getApplicationContext());
-//        //Vérifie si l'utilisateur est connecté
+        // Lancement du Service de vérification de connexion
+        intentSession = new Intent(MainCardViewLocal.this, RapaceService.class);
+        startService(intentSession);
+        //Vérifie si l'utilisateur est connecté
         SessionManager.getInstance(this).checkLogin();
 
         //Ajout d'un local fictif
@@ -171,8 +170,7 @@ public class MainCardViewLocal extends BaseActivity {
             @Override
             public void onClick(View view) {
                 //Check si connecté et relance le service
-                //session.checkLogin();
-                //startService(intent);
+                SessionManager.getInstance(context).checkLogin();
 
                 findViewById(R.id.addLocalLayout).setVisibility(View.VISIBLE);
             }
@@ -255,13 +253,13 @@ public class MainCardViewLocal extends BaseActivity {
      * onDestroy(), gère la destruction de l'activité
      * Déconnecte l'utilisateur si l'activité est détruite via la session
      * */
-    /*
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(!session.isLoggedIn())
-            session.deconnexionSession();
-    }*/
+        if(!SessionManager.getInstance(this).isLoggedIn())
+            SessionManager.getInstance(this).deconnexionSession();
+    }
 
     private boolean ajouterLocal(){
         mProgressDialog = ProgressDialog.show(this, "Chargement...", " Ajout du Local ...");

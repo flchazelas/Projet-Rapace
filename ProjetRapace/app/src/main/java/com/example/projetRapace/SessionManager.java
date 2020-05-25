@@ -7,10 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 public class SessionManager {
 
-    private static SessionManager instance;
+    private static SessionManager instance = null;
     // Shared Preferences
     SharedPreferences pref;
 
@@ -157,7 +158,7 @@ public class SessionManager {
      * Nettoie la Session
      * */
     public void clearSharedPref(){
-
+        Log.d("SessionManager ", "CLEAR");
         // Nettoie toutes les Shared Pref
         editor.clear();
         editor.commit();
@@ -177,7 +178,13 @@ public class SessionManager {
         return pref.getBoolean( IS_ADMIN, false);
     }
 
-    public static SessionManager getInstance(Activity context) {
+    public static SessionManager getInstance(Context context) {
+        Log.i("SessionManager", "instance = " + instance);
+        if(instance != null)
+        Log.i("SessionManager", "id = " + Integer.parseInt(instance.getDonneesSession().get(SessionManager.KEY_ID)));
+        if(instance != null)
+        Log.i("SessionManager", "pseudo = " + instance.getDonneesSession().get(SessionManager.KEY_PSEUDO));
+
         if(instance == null)
             instance = new SessionManager(context);
         return instance;

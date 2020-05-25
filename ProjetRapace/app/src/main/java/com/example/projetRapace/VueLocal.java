@@ -34,7 +34,6 @@ import java.util.ArrayList;
 
 public class VueLocal extends BaseActivity {
     private static final int MENU_QUIT = 1;
-    private SessionManager session;
     private Intent intentSession;
 
     /**
@@ -55,7 +54,7 @@ public class VueLocal extends BaseActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
-                session.deconnexionSession();
+                SessionManager.getInstance(this).deconnexionSession();
                 finish();
                 return true;
         }
@@ -80,14 +79,10 @@ public class VueLocal extends BaseActivity {
         if(intent != null) {
             int id = intent.getIntExtra("id",-1);
 
-//            // Lancement du Service de vérification de connexion
-//            intent = new Intent(VueLocal.this, RapaceService.class);
-//            startService(intent);
-//
-//            // Lancement du Session Manager pour stocker l'utilisateur
-//            session = new SessionManager(getApplicationContext());
-//            session.checkLogin();
-
+            // Lancement du Service de vérification de connexion
+            intentSession = new Intent(VueLocal.this, RapaceService.class);
+            startService(intentSession);
+            // Lancement du Session Manager pour stocker l'utilisateur
             SessionManager.getInstance(this).checkLogin();
 
             if(id != -1){

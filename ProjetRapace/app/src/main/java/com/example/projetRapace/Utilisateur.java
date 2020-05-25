@@ -11,6 +11,7 @@ public class Utilisateur {
     private int isAdmin;
     private int isActif;
     private int phone;
+    private String date;
 
     private boolean autorisation = false;
 
@@ -98,6 +99,7 @@ public class Utilisateur {
         list.add(isActif);
         list.add(isAdmin);
         list.add(phone);
+        list.add(date);
         return new JSONArray(list);
     }
 
@@ -107,5 +109,13 @@ public class Utilisateur {
 
     public void setAutorisation(boolean autorisation) {
         this.autorisation = autorisation;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

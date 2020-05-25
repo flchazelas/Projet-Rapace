@@ -41,7 +41,6 @@ public class MainCardViewCamera extends BaseActivity {
     private RecyclerView recyclerView;
 
     private List<Object> cameras = new ArrayList<Object>();
-    private SessionManager session;
     private Button buttonAjout;
     private Intent intent;
     private AdapterCardView adapterCardView;
@@ -66,7 +65,7 @@ public class MainCardViewCamera extends BaseActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
-                session.deconnexionSession();
+                SessionManager.getInstance(this).deconnexionSession();
                 finish();
                 return true;
         }
@@ -78,7 +77,7 @@ public class MainCardViewCamera extends BaseActivity {
         super.onResume();
 
         if(shouldExecuteOnResume){
-            session.checkLogin();
+            SessionManager.getInstance(this).checkLogin();
             ajouterCameras();
         } else{
             shouldExecuteOnResume = true;
@@ -143,8 +142,7 @@ public class MainCardViewCamera extends BaseActivity {
                 startService(intent);
 
                 // Lancement du Session Manager pour stocker l'utilisateur
-                session = new SessionManager(getApplicationContext());
-                session.checkLogin();
+                SessionManager.getInstance(this).checkLogin();
 
                 //Ajout d'une Caméra fictive
                 ajouterCameras();

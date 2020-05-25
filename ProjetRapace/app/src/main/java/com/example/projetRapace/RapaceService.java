@@ -1,5 +1,6 @@
 package com.example.projetRapace;
 
+import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
@@ -12,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 public class RapaceService extends IntentService {
 
@@ -25,6 +27,7 @@ public class RapaceService extends IntentService {
      * */
     public RapaceService() throws ParseException {
         super("RapaceService");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
         //nowBDD = format.parse("2010-10-15 09:35:57");
     }
 
@@ -33,9 +36,8 @@ public class RapaceService extends IntentService {
      * */
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-
         // Lancement du Session Manager
-        session = new SessionManager(getApplicationContext());
+        session = SessionManager.getInstance(getApplicationContext());
 
         //Lancement du ManagerUtilisateur qui gère les requêtes faîtes à la BDD
         UtilisateurManagerDistant m = new UtilisateurManagerDistant(RapaceService.this);
@@ -54,6 +56,7 @@ public class RapaceService extends IntentService {
             String dateFormatee = format.format(now);
             //Log.d("DATE : ", dateFormatee);
             String dateFormateeBDD = session.getDonneesSession().get(SessionManager.KEY_DATE);
+
             //Log.d("DATE BDD : ", dateFormateeBDD);
 
             //Compare les deux dates, si en BDD inférieure de 1 minutes => deconnexion
@@ -64,7 +67,7 @@ public class RapaceService extends IntentService {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            int t = 5;
+            int t = 5 ;
 
             //Récupération de la valeur en Entier de chacune des dates pour savoir si l'utilisateur n'est pas actif sur l'application depuis plus de 1min
             int time = now.getDate();
@@ -89,8 +92,10 @@ public class RapaceService extends IntentService {
                     //Sinon on met à jour la date en BDD
                     if(time > timeBDD + t)
                         m.envoi("deconnexion", u.convertionJSONArray());
-                    else
+                    else{
+                        u.setDate(dateFormatee);
                         m.envoi("changeDate", u.convertionJSONArray());
+                    }
                 }
                 else{
                     time = now.getMinutes();
@@ -101,8 +106,10 @@ public class RapaceService extends IntentService {
                     Log.d("DATE TOTAL : ", String.valueOf(total));
                     if(total > t)
                         m.envoi("deconnexion", u.convertionJSONArray());
-                    else
+                    else{
+                        u.setDate(dateFormatee);
                         m.envoi("changeDate", u.convertionJSONArray());
+                    }
                 }
 
             }
@@ -122,13 +129,14 @@ public class RapaceService extends IntentService {
      * */
     public void verifConnecte(String s){
         session.setData(s);
-
     }
 
     /**
      * Nettoie la Session
      * */
     public void clear(){
+        Log.d("RapaceService ", "CLEAR");
+
         session.clearSharedPref();
     }
 }

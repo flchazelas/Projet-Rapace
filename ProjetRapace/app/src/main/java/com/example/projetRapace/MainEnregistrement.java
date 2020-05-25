@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class MainEnregistrement extends BaseActivity {
 
@@ -83,6 +84,7 @@ public class MainEnregistrement extends BaseActivity {
     public void verifConnexion(){
         Date now = new Date();
         SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
         String dateFormatee = format.format(now);
         session.creationLoginSession(utilisateur.getPseudo_utilisateur(), dateFormatee,utilisateur.getId_utilisateur(), false);
 

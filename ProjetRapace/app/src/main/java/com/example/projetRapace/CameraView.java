@@ -35,7 +35,6 @@ import java.util.Calendar;
 public class CameraView extends BaseActivity {
     private MjpegView mv;
     private static final int MENU_QUIT = 1;
-    private SessionManager session;
     private Intent intentSession;
 
     /**
@@ -72,8 +71,7 @@ public class CameraView extends BaseActivity {
             startService(intentSession);
 
             // Lancement du Session Manager pour stocker l'utilisateur
-            session = new SessionManager(getApplicationContext());
-            session.checkLogin();
+            SessionManager.getInstance(this).checkLogin();
 
             final int id = intent.getIntExtra("id", -1);
             final String ip = intent.getStringExtra("ip");
