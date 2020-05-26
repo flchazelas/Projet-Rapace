@@ -18,9 +18,11 @@ import java.util.TimeZone;
 public class RapaceService extends IntentService {
 
     private SessionManager session;
+    private Intent i;
     //Attribut de format de Date
     private SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
     private Date now;
+    private static final int T = 0;
 
     /**
      * Constructeur du Service
@@ -37,6 +39,7 @@ public class RapaceService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         // Lancement du Session Manager
+        i = intent;
         session = SessionManager.getInstance(getApplicationContext());
 
         //Lancement du ManagerUtilisateur qui gère les requêtes faîtes à la BDD
@@ -67,7 +70,6 @@ public class RapaceService extends IntentService {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            int t = 5 ;
 
             //Récupération de la valeur en Entier de chacune des dates pour savoir si l'utilisateur n'est pas actif sur l'application depuis plus de 1min
             int time = now.getDate();
@@ -90,7 +92,7 @@ public class RapaceService extends IntentService {
                     Log.d("DATE BDD : ", String.valueOf(timeBDD));
                     //Si les minutes sont supérieures à 1 => Requête de déconnexion envoyée
                     //Sinon on met à jour la date en BDD
-                    if(time > timeBDD + t)
+                    if(time > timeBDD + T)
                         m.envoi("deconnexion", u.convertionJSONArray());
                     else{
                         u.setDate(dateFormatee);
@@ -104,7 +106,7 @@ public class RapaceService extends IntentService {
                     Log.d("DATE BDD : ", String.valueOf(timeBDD));
                     int total = 60 - timeBDD + time;
                     Log.d("DATE TOTAL : ", String.valueOf(total));
-                    if(total > t)
+                    if(total > T)
                         m.envoi("deconnexion", u.convertionJSONArray());
                     else{
                         u.setDate(dateFormatee);
@@ -136,7 +138,8 @@ public class RapaceService extends IntentService {
      * */
     public void clear(){
         Log.d("RapaceService ", "CLEAR");
-
+        //Log.d("PACKAGE : ", i.toString());
+        //if(i.getPackage().)
         session.clearSharedPref();
     }
 }

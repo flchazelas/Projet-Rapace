@@ -212,6 +212,14 @@ public class MainCardViewLocal extends BaseActivity {
         };
 
         startService(intentSession);
+        /*if(session.user_id ==-1){
+            Toast.makeText(context, "Session invalide.\nVeuillez réessayer ou relancer l'application.",Toast.LENGTH_LONG).show();
+            return;
+        }*/
+        //session.checkLogin();
+
+        Log.i("onResume", "id = " + Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
+        Log.i("onResume", "id = " + SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO));
         LocalDBManager.getByUser(callback, Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
 
         Thread checkLoading = new Thread(new Runnable(){
@@ -247,8 +255,7 @@ public class MainCardViewLocal extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(!SessionManager.getInstance(this).isLoggedIn())
-            SessionManager.getInstance(this).deconnexionSession();
+        SessionManager.getInstance(this).deconnexionSession();
     }
 
     private boolean ajouterLocal(){

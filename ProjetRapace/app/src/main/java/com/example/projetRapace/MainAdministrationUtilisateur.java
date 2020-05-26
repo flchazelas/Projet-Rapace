@@ -45,7 +45,7 @@ public class MainAdministrationUtilisateur extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_administration_utilisateur);
 
-        session = new SessionManager(getApplicationContext());
+        session = SessionManager.getInstance(this);
 
         m = new UtilisateurManagerDistant(MainAdministrationUtilisateur.this);
         String pseudo = session.getDonneesSession().get(SessionManager.KEY_PSEUDO);
@@ -57,7 +57,7 @@ public class MainAdministrationUtilisateur extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        session = new SessionManager(getApplicationContext());
+        session = SessionManager.getInstance(this);
 
         m = new UtilisateurManagerDistant(MainAdministrationUtilisateur.this);
         String pseudo = session.getDonneesSession().get(SessionManager.KEY_PSEUDO);

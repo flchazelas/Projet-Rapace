@@ -46,7 +46,7 @@ public class MainConnexion extends BaseActivity {
         startService(intent);
 
         // Session Manager
-        session = new SessionManager(getApplicationContext());
+        session = SessionManager.getInstance(this);
         //Toast.makeText(getApplicationContext(), "User Login Status: " + session.isLoggedIn(), Toast.LENGTH_LONG).show();
 
         //textPseudo = (TextView)findViewById(R.id.textRenduPseudo);

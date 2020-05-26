@@ -12,12 +12,23 @@ public class Utilisateur {
     private int isActif;
     private int phone;
     private String date;
+    private String dateCreation;
 
     private boolean autorisation = false;
 
     /**
      * Constructeur Utilisateur
      */
+    public Utilisateur(int id,String pseudo, String mdp, int phone, int isAdmin, int isActif, String date, String dateCreation) {
+        this.id_utilisateur=id;
+        this.pseudo_utilisateur=pseudo;
+        this.mdp_utilisateur=mdp;
+        this.isAdmin = isAdmin;
+        this.isActif = isActif;
+        this.date = date;
+        this.dateCreation = dateCreation;
+        this.phone = phone;
+    }
     public Utilisateur(int id,String pseudo, String mdp, int isAdmin, int isActif) {
         this.id_utilisateur=id;
         this.pseudo_utilisateur=pseudo;
@@ -100,6 +111,7 @@ public class Utilisateur {
         list.add(isAdmin);
         list.add(phone);
         list.add(date);
+        list.add(dateCreation);
         return new JSONArray(list);
     }
 
@@ -117,5 +129,13 @@ public class Utilisateur {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(String dateCreation) {
+        this.dateCreation = dateCreation;
     }
 }
