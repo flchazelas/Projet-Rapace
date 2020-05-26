@@ -30,6 +30,7 @@
 
         <activity android:name=".ImageViewActivity" />
         <activity android:name=".VideoView" />
+        <activity android:name=".CameraAlerteView" />
         <activity android:name=".CameraView" />
         <activity android:name=".CameraListView" />
         <activity android:name=".VueCamera" />

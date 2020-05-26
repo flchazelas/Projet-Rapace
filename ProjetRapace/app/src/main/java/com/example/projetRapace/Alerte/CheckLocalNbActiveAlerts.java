@@ -52,13 +52,13 @@ public class CheckLocalNbActiveAlerts extends IntentService {
                 AlerteDBManager.AlerteDBCallbackInterface callback = new AlerteDBManager.AlerteDBCallbackInterface() {
                     @Override
                     public void onQueryFinished(String operation, String output) {
-                        Log.d("CheckLocalNbActiveAlerts", "(onQueryFinished) -> "+ operation);
+                        //Log.d("CheckLocalNbActiveAlerts", "(onQueryFinished) -> "+ operation);
                         if(operation.equals(AlerteDBManager.ALERTE_DB_GETLOCALACTIVEALERTS)){
                             try {
-                                Log.d("CheckLocalNbActiveAlerts", "(retour ALERTE_DB_GETLOCALACTIVEALERTS) -> "+ output);
+                                //Log.d("CheckLocalNbActiveAlerts", "(retour ALERTE_DB_GETLOCALACTIVEALERTS) -> "+ output);
 
                                 JSONArray jsonResult = new JSONArray(output);
-                                Log.d("MainCardViewCamera", "(retour CAMERA_DB_GETBYLOCAL) -> "+ Alerte.alertesFromJSON(jsonResult));
+                                //Log.d("MainCardViewCamera", "(retour CAMERA_DB_GETBYLOCAL) -> "+ Alerte.alertesFromJSON(jsonResult));
                                 alertes.clear();
                                 for(Alerte a : Alerte.alertesFromJSON(jsonResult))
                                     alertes.add(a);
@@ -76,7 +76,7 @@ public class CheckLocalNbActiveAlerts extends IntentService {
                     @Override
                     public void run() {
                         while(!(check_done)){
-                            Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
+                            //Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
                             if (checkLoading.interrupted())
                                 return;
                             try {
@@ -85,7 +85,7 @@ public class CheckLocalNbActiveAlerts extends IntentService {
                                 e.printStackTrace();
                             }
                         }
-                        Log.d("CheckLocalNbActiveAlerts", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
+                        //Log.d("CheckLocalNbActiveAlerts", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
 
                         if(alertes.size() != nbActiveAlert){
                             nbActiveAlert = alertes.size();

@@ -105,6 +105,10 @@ public class MainCardViewCamera extends BaseActivity {
         super.onResume();
 
         if(shouldExecuteOnResume){
+            intentService = new Intent(MainCardViewCamera.this, CheckLocalNbActiveAlerts.class);
+            intentService.putExtra("id_local",id);
+            startService(intentService);
+
             startService(intentSession);
             ajouterCameras();
         } else{
@@ -371,5 +375,11 @@ public class MainCardViewCamera extends BaseActivity {
     protected void onDestroy() {
         CheckLocalNbActiveAlerts.getInstance().stop(intentService);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        CheckLocalNbActiveAlerts.getInstance().stop(intentService);
+        super.onPause();
     }
 }

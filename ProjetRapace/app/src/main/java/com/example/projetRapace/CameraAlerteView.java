@@ -68,7 +68,7 @@ public class CameraAlerteView extends BaseActivity {
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
                 mv = new MjpegView(this);
                 mv.setZOrderOnTop(false);
-                setContentView(R.layout.activity_camera_view);
+                setContentView(R.layout.activity_camera_alerte_view);
 
                 RelativeLayout rl = (RelativeLayout) findViewById(R.id.ControlsHolder);
                 ((FrameLayout) findViewById(R.id.FrameHolder)).removeAllViews();

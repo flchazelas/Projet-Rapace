@@ -53,8 +53,8 @@ public class MainAlerteDesactive extends AppCompatActivity {
 
         //A enlever quand tu auras récup la liste des actions
         List<Object> listeI = new ArrayList<>();
-        listeI.add(new Image(0, "https://dsrhsjyd/sdb/sdbt.com"));
-        listeI.add(new Video(1, "https://sgbdb/sqsgsbtsdb/srgrsdbt.com"));
+        listeI.add(new Image(0, "https://dsrhsjyd/sdb/sdbt.com", ""));
+        listeI.add(new Video(1, "https://sgbdb/sqsgsbtsdb/srgrsdbt.com",""));
         this.recupListeIV(listeI);
     }
 

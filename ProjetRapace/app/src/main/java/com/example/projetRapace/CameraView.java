@@ -308,12 +308,17 @@ public class CameraView extends BaseActivity {
     }
 
     public void onPause() {
+        CheckNewAlertService.getInstance().stop(intentService);
         super.onPause();
         if(mv != null)
             mv.stopPlayback();
     }
 
     public void onResume() {
+        intentService = new Intent(CameraView.this, CheckNewAlertService.class);
+        intentService.putExtra("alertStatus",check_result);
+        intentService.putExtra("id_camera",id_camera);
+        startService(intentService);
         super.onResume();
         if(mv != null)
             mv.startPlayback();

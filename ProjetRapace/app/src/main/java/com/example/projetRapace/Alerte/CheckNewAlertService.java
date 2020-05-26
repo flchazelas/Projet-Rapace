@@ -40,7 +40,7 @@ public class CheckNewAlertService extends IntentService {
         Runnable runnable = new Runnable() {
             public void run() {
                 handler.postDelayed(this, 2000);
-                Log.d("CheckNewAlertService", "(RUN)");
+                //Log.d("CheckNewAlertService", "(RUN)");
 
                 //test
                 check_done = false;
@@ -48,10 +48,10 @@ public class CheckNewAlertService extends IntentService {
                 AlerteDBManager.AlerteDBCallbackInterface callback = new AlerteDBManager.AlerteDBCallbackInterface() {
                     @Override
                     public void onQueryFinished(String operation, String output) {
-                        Log.d("CheckNewAlertService", "(onQueryFinished) -> "+ operation);
+                        //Log.d("CheckNewAlertService", "(onQueryFinished) -> "+ operation);
                         if(operation.equals(AlerteDBManager.ALERTE_DB_GETCURRENTFORCAMERA)){
                             try {
-                                Log.d("CheckNewAlertService", "(retour ALERTE_DB_GETCURRENTFORCAMERA) -> "+ output);
+                               // Log.d("CheckNewAlertService", "(retour ALERTE_DB_GETCURRENTFORCAMERA) -> "+ output);
                                 if(!output.equals("NO_RESULT")){
                                     check_result = true;
                                 } else
@@ -70,7 +70,7 @@ public class CheckNewAlertService extends IntentService {
                     @Override
                     public void run() {
                         while(!(check_done)){
-                            Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
+                            //Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
                             if (checkLoading.interrupted())
                                 return;
 
@@ -81,7 +81,7 @@ public class CheckNewAlertService extends IntentService {
                             }
                         }
 
-                        Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
+                        //Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
                         if(check_result != isThereActiveAlert){
                             Intent intent1 = new Intent();
                             intent1.setAction("com.example.Alerte.ModifiedAlertStatus");

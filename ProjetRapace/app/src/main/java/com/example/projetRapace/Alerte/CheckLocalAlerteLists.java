@@ -56,13 +56,13 @@ public class CheckLocalAlerteLists  extends IntentService {
                 AlerteDBManager.AlerteDBCallbackInterface callback = new AlerteDBManager.AlerteDBCallbackInterface() {
                     @Override
                     public void onQueryFinished(String operation, String output) {
-                        Log.d("CheckLocalAlerteLists", "(onQueryFinished) -> "+ operation);
+                        //Log.d("CheckLocalAlerteLists", "(onQueryFinished) -> "+ operation);
                         if(operation.equals(AlerteDBManager.ALERTE_DB_GETLOCALACTIVEALERTS)){
                             try {
-                                Log.d("CheckLocalAlerteLists", "(retour ALERTE_DB_GETLOCALACTIVEALERTS) -> "+ output);
+                                //Log.d("CheckLocalAlerteLists", "(retour ALERTE_DB_GETLOCALACTIVEALERTS) -> "+ output);
 
                                 JSONArray jsonResult = new JSONArray(output);
-                                Log.d("CheckLocalAlerteLists", "(retour CAMERA_DB_GETBYLOCAL) -> "+ Alerte.alertesFromJSON(jsonResult));
+                                //Log.d("CheckLocalAlerteLists", "(retour CAMERA_DB_GETBYLOCAL) -> "+ Alerte.alertesFromJSON(jsonResult));
                                 buffer_alertesActives.clear();
                                 for(Alerte a : Alerte.alertesFromJSON(jsonResult))
                                     buffer_alertesActives.add(a);
@@ -79,13 +79,13 @@ public class CheckLocalAlerteLists  extends IntentService {
                 AlerteDBManager.AlerteDBCallbackInterface callback2 = new AlerteDBManager.AlerteDBCallbackInterface() {
                     @Override
                     public void onQueryFinished(String operation, String output) {
-                        Log.d("CheckLocalAlerteLists", "(onQueryFinished) -> "+ operation);
+                        //Log.d("CheckLocalAlerteLists", "(onQueryFinished) -> "+ operation);
                         if(operation.equals(AlerteDBManager.ALERTE_DB_GETLOCALNONACTIVEALERTS)){
                             try {
-                                Log.d("CheckLocalAlerteLists", "(retour ALERTE_DB_GETLOCALNONACTIVEALERTS) -> "+ output);
+                                //Log.d("CheckLocalAlerteLists", "(retour ALERTE_DB_GETLOCALNONACTIVEALERTS) -> "+ output);
 
                                 JSONArray jsonResult = new JSONArray(output);
-                                Log.d("CheckLocalAlerteLists", "(retour CAMERA_DB_GETBYLOCAL) -> "+ Alerte.alertesFromJSON(jsonResult));
+                                //Log.d("CheckLocalAlerteLists", "(retour CAMERA_DB_GETBYLOCAL) -> "+ Alerte.alertesFromJSON(jsonResult));
                                 buffer_alertesNonActives.clear();
                                 for(Alerte a : Alerte.alertesFromJSON(jsonResult))
                                     buffer_alertesNonActives.add(a);
@@ -103,7 +103,7 @@ public class CheckLocalAlerteLists  extends IntentService {
                     @Override
                     public void run() {
                         while(!(check_actif_done && check_nonactif_done)){
-                            Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_actif_done : " + check_actif_done + ") (check_nonactif_done : "+check_nonactif_done);
+                            //Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_actif_done : " + check_actif_done + ") (check_nonactif_done : "+check_nonactif_done);
                             if (checkLoading.interrupted())
                                 return;
                             try {
@@ -112,7 +112,7 @@ public class CheckLocalAlerteLists  extends IntentService {
                                 e.printStackTrace();
                             }
                         }
-                        Log.d("CheckLocalAlerteLists", "(Waiting for checking to end) -> (check_actif_done : " + check_actif_done + ") (check_nonactif_done : "+ check_nonactif_done + ")");
+                        //Log.d("CheckLocalAlerteLists", "(Waiting for checking to end) -> (check_actif_done : " + check_actif_done + ") (check_nonactif_done : "+ check_nonactif_done + ")");
 
                         if((buffer_alertesNonActives.size() + buffer_alertesActives.size()) == (alertesNonActives.size() + alertesActives.size())){
                             isChanged = true;

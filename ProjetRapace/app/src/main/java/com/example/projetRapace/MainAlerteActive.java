@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,11 +24,15 @@ import android.widget.Toast;
 import com.example.projetRapace.Alerte.Alerte;
 import com.example.projetRapace.Alerte.AlerteDBManager;
 import com.example.projetRapace.Camera.Camera;
+import com.example.projetRapace.Camera.CameraDBManager;
 import com.example.projetRapace.ImageVideo.Image;
 import com.example.projetRapace.ImageVideo.Video;
 import com.example.projetRapace.Local.Local;
+import com.example.projetRapace.Local.LocalDBManager;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +45,14 @@ public class MainAlerteActive extends AppCompatActivity {
     private ListView listViewActions;
     private ListView listViewIV;
     private Intent intentService;
+
+    private Alerte alerte;
+    private Camera camera;
+    private Local local;
+    private ArrayList<Video> videos;
+    private ArrayList<Image> image;
+
+    private boolean pageLoading;
 
     private ProgressDialog mProgressDialog;
 
@@ -81,22 +94,6 @@ public class MainAlerteActive extends AppCompatActivity {
         startService(intentService);
 
         Intent intent = getIntent();
-        listViewUser = findViewById(R.id.listUserNum);
-        listViewActions = findViewById(R.id.listActions);
-        listViewIV = findViewById(R.id.listIV);
-        /*
-        //A enlever quand tu auras récup la liste des utilisateurs
-        List<Utilisateur> listeU = new ArrayList<>();
-        listeU.add(new Utilisateur(0, "Fred", "fred", "0635482569"));
-        listeU.add(new Utilisateur(1, "Gile", "gile", "0745825696"));
-        listeU.add(new Utilisateur(2, "Daniel", "daniel", "0645859635"));
-        this.recupListeUtilisateurs(listeU);*/
-
-        UtilisateurManagerDistant m = new UtilisateurManagerDistant(MainAlerteActive.this);
-        ArrayList list = new ArrayList();
-        list.add(10);
-        m.envoi("recupNumUtilisateur", new JSONArray(list));
-
         //Récupération des champs de données
         if(intent != null) {
             id_alerte = intent.getIntExtra("id",-1);
@@ -235,61 +232,156 @@ public class MainAlerteActive extends AppCompatActivity {
         listViewIV.setAdapter(adapter);
     }
 
-
-    public void onClick(View v, Alerte a, Camera c, Local l){
-        switch (v.getId()){
-            case R.id.boutonDirect:
-                Intent intent = new Intent(this, CameraAlerteView.class);
-                intent.putExtra("id", a.getId());
-                intent.putExtra("ip", c.getIp());
-                startActivity(intent);
-
-                break;
-
-            case R.id.appellerNumLocal:
-
-                //Donner le numéro à appeller ==>
-                String s = l.getPhoneNumber();
-                Uri uri = Uri.parse("tel:"+s);
-                intent = new Intent(Intent.ACTION_DIAL, uri);
-                startActivity(intent);
-                break;
-
-            case R.id.ignorerAlerte:
-                mProgressDialog = ProgressDialog.show(context, "Chargement...", " Chargement des informations de la caméra ...");
-                mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
-
-                AlerteDBManager.AlerteDBCallbackInterface callback = new AlerteDBManager.AlerteDBCallbackInterface() {
-                    @Override
-                    public void onQueryFinished(String operation, String output) {
-                        Log.d("ignorerAlerte", "(onQueryFinished) -> "+ operation);
-                        if(operation.equals(AlerteDBManager.ALERTE_DB_IGNOREALERTE)){
-                            try {
-                                Log.d("ignorerAlerte", "(retour ALERTE_DB_IGNOREALERTE) -> "+ output);
-                                if(output.equals("UPDATE_SUCCESSFUL"))
-                                    add_camera_query_result = true;
-                                else
-                                    add_camera_query_result = false;
-                            } catch (Exception e) {
-                                Toast.makeText(context, "Erreur lors de la vérification des alertes courantes.\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                };
-                AlerteDBManager.getLocalActiveAlerts(callback,id_local);
-
-                break;
-        }
-    }
-
     public void loadPage(){
-        //A enlever quand tu auras récup la liste des utilisateurs
-        List<Utilisateur> listeU = new ArrayList<>();
-        listeU.add(new Utilisateur(0, "Fred", "fred", "0635482569"));
-        listeU.add(new Utilisateur(1, "Gile", "gile", "0745825696"));
-        listeU.add(new Utilisateur(2, "Daniel", "daniel", "0645859635"));
-        this.recupListeUtilisateurs(listeU);
+
+
+        pageLoading = false;
+        alerte = null;
+        camera = null;
+        local = null;
+
+        mProgressDialog = ProgressDialog.show(context, "Chargement...", " Chargement des informations de la caméra ...");
+        mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
+
+        AlerteDBManager.AlerteDBCallbackInterface callbackAlerte = new AlerteDBManager.AlerteDBCallbackInterface() {
+            @Override
+            public void onQueryFinished(String operation, String output) {
+                Log.d("loadPage", "(onQueryFinished) -> "+ operation);
+                if(operation.equals(AlerteDBManager.ALERTE_DB_GETBYID)){
+                    try {
+                        Log.d("loadPage", "(retour ALERTE_DB_GETBYID) -> "+ output);
+                        if(!output.equals("NO_RESULT")){
+                            JSONObject jsonResult = new JSONObject(output);
+                            alerte = Alerte.alerteFromJSON(jsonResult);
+                            Log.d("loadPage", "(retour ALERTE_DB_GETBYID) -> "+ alerte);
+
+                            CameraDBManager.CameraDBCallbackInterface callbackCamera = new CameraDBManager.CameraDBCallbackInterface() {
+                                @Override
+                                public void onQueryFinished(String operation, String output) {
+                                    Log.d("loadPage", "(onQueryFinished) -> "+ operation);
+                                    if(operation.equals(CameraDBManager.CAMERA_DB_GETBYID)){
+                                        try {
+                                            Log.d("loadPage", "(retour CAMERA_DB_GETBYID) -> "+ output);
+                                            if(!output.equals("NO_RESULT")){
+                                                JSONObject jsonResult = new JSONObject(output);
+                                                camera = Camera.cameraFromJSON(jsonResult);
+                                                Log.d("loadPage", "(retour CAMERA_DB_GETBYID) -> "+ camera);
+
+                                                LocalDBManager.LocalDBCallbackInterface callbackLocal = new LocalDBManager.LocalDBCallbackInterface() {
+                                                    @Override
+                                                    public void onQueryFinished(String operation, String output) {
+                                                        Log.d("loadPage", "(onQueryFinished) -> "+ operation);
+                                                        if(operation.equals(LocalDBManager.LOCAL_DB_GETBYID)){
+                                                            try {
+                                                                Log.d("loadPage", "(retour LOCAL_DB_GETBYID) -> "+ output);
+                                                                if(!output.equals("NO_RESULT")){
+                                                                    JSONObject jsonResult = new JSONObject(output);
+                                                                    local = Local.localFromJSON(jsonResult);
+                                                                    Log.d("loadPage", "(retour LOCAL_DB_GETBYID) -> "+ local);
+
+
+                                                                }
+                                                                pageLoading = true;
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+                                                    }
+                                                };
+                                                LocalDBManager.getById(callbackLocal,alerte.LocId);
+
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            };
+                            CameraDBManager.getById(callbackCamera,alerte.CamId);
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        AlerteDBManager.getById(callbackAlerte,id_alerte);
+
+        Thread checkLoading = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                while(!(pageLoading))
+                    Log.d("MainAlerteActive", "(Waiting for loading to end) -> (pageLoading : " + pageLoading + ")");
+
+                context.runOnUiThread(new Runnable(){
+                    @Override
+                    public void run() {
+                        if (mProgressDialog != null)
+                            mProgressDialog.dismiss();
+
+                        UtilisateurManagerDistant m = new UtilisateurManagerDistant(MainAlerteActive.this);
+                        ArrayList list = new ArrayList();
+                        list.add(alerte.getId());
+                        m.envoi("recupNumUtilisateur", new JSONArray(list));
+
+                        ((Button) findViewById(R.id.boutonDirect)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(context, CameraAlerteView.class);
+                                intent.putExtra("id", alerte.getId());
+                                intent.putExtra("ip", camera.getIp());
+                                startActivity(intent);
+                            }
+                        });
+
+                        ((Button) findViewById(R.id.appellerNumLocal)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //Donner le numéro à appeller ==>
+                                String s = local.getPhoneNumber();
+                                Uri uri = Uri.parse("tel:"+s);
+                                intent = new Intent(Intent.ACTION_DIAL, uri);
+                                startActivity(intent);
+                            }
+                        });
+
+                        ((Button) findViewById(R.id.ignorerAlerte)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mProgressDialog = ProgressDialog.show(context, "Chargement...", " Chargement des informations de la caméra ...");
+                                mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
+
+                                AlerteDBManager.AlerteDBCallbackInterface callback = new AlerteDBManager.AlerteDBCallbackInterface() {
+                                    @Override
+                                    public void onQueryFinished(String operation, String output) {
+                                        Log.d("ignorerAlerte", "(onQueryFinished) -> "+ operation);
+                                        if(operation.equals(AlerteDBManager.ALERTE_DB_IGNOREALERTE)){
+                                            try {
+                                                Log.d("ignorerAlerte", "(retour ALERTE_DB_IGNOREALERTE) -> "+ output);
+                                                if (mProgressDialog != null)
+                                                    mProgressDialog.dismiss();
+                                                if(output.equals("UPDATE_SUCCESSFUL"))
+                                                    finish();
+                                                else
+                                                    Toast.makeText(context, "Erreur lors de l'archivage de l'alerte.\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
+                                            } catch (Exception e) {
+                                                Toast.makeText(context, "Erreur lors de la vérification des alertes courantes.\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                };
+                                AlerteDBManager.ignoreAlerte(callback,alerte.getId());
+
+                            }
+                        });
+
+                    }
+                });
+            }
+        });
+        checkLoading.start();
 
         //A enlever quand tu auras récup la liste des actions
         List<Action> listeA = new ArrayList<>();

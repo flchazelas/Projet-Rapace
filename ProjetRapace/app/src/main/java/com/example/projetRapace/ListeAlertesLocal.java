@@ -35,6 +35,7 @@ public class ListeAlertesLocal extends AppCompatActivity {
     private static final int MENU_QUIT = 1;
     private Intent intentSession;
     private Intent intentService;
+    boolean shouldExecuteOnResume;
     private ProgressDialog mProgressDialog;
 
     private int id_local;
@@ -86,6 +87,7 @@ public class ListeAlertesLocal extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_liste_alertes_local);
+        shouldExecuteOnResume = false;
 
         Intent intent = getIntent();
 
@@ -259,5 +261,23 @@ public class ListeAlertesLocal extends AppCompatActivity {
     protected void onDestroy() {
         CheckLocalAlerteLists.getInstance().stop(intentService);
         super.onDestroy();
+    }
+    @Override
+    protected void onPause() {
+        CheckLocalAlerteLists.getInstance().stop(intentService);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        if(shouldExecuteOnResume){
+            initView();
+            intentService = new Intent(ListeAlertesLocal.this, CheckLocalAlerteLists.class);
+            intentService.putExtra("isChanged",isChanged);
+            intentService.putExtra("id_local",id_local);
+            startService(intentService);
+        }else
+            shouldExecuteOnResume = true;
+        super.onResume();
     }
 }
