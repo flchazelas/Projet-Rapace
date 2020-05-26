@@ -24,7 +24,7 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainAlerteActive extends AppCompatActivity {
+public class MainAlerteDesactive extends AppCompatActivity {
 
     private Intent intent;
     private ListView listViewUser;
@@ -38,24 +38,11 @@ public class MainAlerteActive extends AppCompatActivity {
         setContentView(R.layout.activity_main_alerte_active);
 
         // Lancement du Service de vérification de connexion
-        intentService = new Intent(MainAlerteActive.this, RapaceService.class);
+        intentService = new Intent(MainAlerteDesactive.this, RapaceService.class);
         startService(intentService);
 
-        listViewUser = findViewById(R.id.listUserNum);
         listViewActions = findViewById(R.id.listActions);
         listViewIV = findViewById(R.id.listIV);
-        /*
-        //A enlever quand tu auras récup la liste des utilisateurs
-        List<Utilisateur> listeU = new ArrayList<>();
-        listeU.add(new Utilisateur(0, "Fred", "fred", "0635482569"));
-        listeU.add(new Utilisateur(1, "Gile", "gile", "0745825696"));
-        listeU.add(new Utilisateur(2, "Daniel", "daniel", "0645859635"));
-        this.recupListeUtilisateurs(listeU);*/
-
-        UtilisateurManagerDistant m = new UtilisateurManagerDistant(MainAlerteActive.this);
-        ArrayList list = new ArrayList();
-        list.add(10);
-        m.envoi("recupNumUtilisateur", new JSONArray(list));
 
         //A enlever quand tu auras récup la liste des actions
         List<Action> listeA = new ArrayList<>();
@@ -69,48 +56,6 @@ public class MainAlerteActive extends AppCompatActivity {
         listeI.add(new Image(0, "https://dsrhsjyd/sdb/sdbt.com"));
         listeI.add(new Video(1, "https://sgbdb/sqsgsbtsdb/srgrsdbt.com"));
         this.recupListeIV(listeI);
-    }
-
-
-    public void recupListeUtilisateurs(final List<Utilisateur> listeU){
-        
-        final String[] strings = new String[listeU.size()];
-        for (int i=0; i<listeU.size(); i++){
-            strings[i] = listeU.get(i).getPseudo_utilisateur()+"%"+listeU.get(i).getPhone();
-        }
-
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strings){
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-            View view = convertView;
-
-            if (view == null)
-            {
-                LayoutInflater li = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                //le layout représentant la ligne dans le listView
-                view = li.inflate(R.layout.ligne_liste_num, null);
-            }
-
-            TextView text = (TextView) view.findViewById(R.id.textLigne);
-            final String[] s = strings[position].split("%");
-            text.setText(s[0]+"     "+s[1]);
-
-            ImageButton buttonAppel = (ImageButton) view.findViewById(R.id.boutonLigne);
-            buttonAppel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Donner le numéro à appeller ==>
-                    Uri uri = Uri.parse("tel:"+s[1]);
-                    intent = new Intent(Intent.ACTION_DIAL, uri);
-                    startActivity(intent);
-                }
-            });
-
-            return view;
-        }};
-
-        listViewUser.setAdapter(adapter);
     }
 
 
@@ -195,34 +140,5 @@ public class MainAlerteActive extends AppCompatActivity {
             }};
 
         listViewIV.setAdapter(adapter);
-    }
-
-
-    public void onClick(View v){
-        switch (v.getId()){
-            case R.id.boutonDirect:
-
-
-                break;
-
-            case R.id.appellerNumLocal:
-
-                //Donner le numéro à appeller ==>
-                String s = "0625468526";
-                Uri uri = Uri.parse("tel:"+s);
-                intent = new Intent(Intent.ACTION_DIAL, uri);
-                startActivity(intent);
-                break;
-
-            case R.id.declencherAlarme:
-
-
-                break;
-
-            case R.id.ignorerAlerte:
-
-
-                break;
-        }
     }
 }

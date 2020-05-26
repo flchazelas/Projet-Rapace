@@ -370,5 +370,58 @@
 				die();
 			}
 		}
+
+		//récupération des numéros des utilisateurs liés à l'id du local en Alerte
+		elseif ($_REQUEST["operation"] == "recupNumUtilisateur") {
+			try{
+				//récupération données en post
+				$donnees = $_REQUEST["donnees"];
+				$donnee = json_decode($donnees);
+				$id_alerte = $donnee[0];
+
+				print ("recupNumUtilisateur%");
+				$connexion = connexionPDO();
+
+				//Récupération de l'id_camera
+				$requete = $connexion->prepare("SELECT * FROM camera_alerte WHERE id_alerte ='$id_alerte'");
+				$requete->execute();
+
+				if($ligne = $requete->fetch(PDO::FETCH_ASSOC)){
+					$id_camera = $ligne["id_camera"];
+				}
+
+				//Récupération de l'id_local
+				$requete = $connexion->prepare("SELECT * FROM local_camera WHERE id_camera ='$id_camera'");
+				$requete->execute();
+
+				if($ligne = $requete->fetch(PDO::FETCH_ASSOC)){
+					$id_local = $ligne["id_local"];
+				}
+
+				//Récupération de l'id_user
+				$requete = $connexion->prepare("SELECT * FROM local_user WHERE id_local ='$id_local'");
+				$requete->execute();
+
+				if($rows = $requete->fetchAll(PDO::FETCH_ASSOC)){
+					foreach($rows as $row){
+						$user = $row["id_user"];
+						//Récupération de l'utilisateur
+						$requete = $connexion->prepare("SELECT * FROM users WHERE id ='$user'");
+						$requete->execute();
+
+						if($ligne = $requete->fetch(PDO::FETCH_ASSOC)){
+							print(json_encode($ligne)."%");
+						}
+					}
+				}
+				else{
+					print("Erreur connexion !% ");
+				}
+
+			}catch(PDOException $e){
+				print "Erreur !% ".$e->getMessage();
+				die();
+			}
+		}
 	}
 ?>

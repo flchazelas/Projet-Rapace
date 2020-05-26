@@ -225,6 +225,36 @@ public class UtilisateurManagerDistant implements AsyncReponse{
                 this.envoi("recupUtilisateurs", u.convertionJSONArray());
             }
 
+            //Récup numéro des utilisateurs liés à l'alerte d'une caméra,
+            //redirection vers la méthode
+            //Sinon Affiche Erreur de conversion JSON
+            else if(msg[0].equals("recupNumUtilisateur")){
+                Log.d("RécupNumUtilisateur", "---------------"+msg[1]);
+                if(!msg[1].equals("Erreur connexion !")) {
+                    try {
+                        List<Utilisateur> listeU = new ArrayList<>();
+                        for (int i=1; i<msg.length; i++){
+                            //Décode le msg reçut du retour de la requête en String
+                            JSONObject info = new JSONObject(msg[i]);
+
+                            String pseudo = info.getString("username");
+                            String mdp = info.getString("password");
+                            int id = info.getInt("id");
+                            String num = info.getString("numTel");
+                            Utilisateur utilisateur = new Utilisateur(id, pseudo, mdp, num);
+                            listeU.add(utilisateur);
+                        }
+
+                        ((MainAlerteActive) context).recupListeUtilisateurs(listeU);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Log.d("Erreur", "Erreur de connexion!");
+                }
+            }
+
             //Si erreur, l'affiche dans la console
             else if(msg[0].equals("Erreur !")){
                 Log.d("Erreur", "---------------"+msg[1]);
