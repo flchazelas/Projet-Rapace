@@ -156,9 +156,8 @@ public class UtilisateurManagerDistant implements AsyncReponse{
                         String pseudo = info.getString("username");
                         String mdp = info.getString("password");
                         int id = info.getInt("id");
-                        int isActif = info.getInt("isActif");
-                        int isAdmin = info.getInt("isAdmin");
-                        Utilisateur utilisateur = new Utilisateur(id, pseudo, mdp, isAdmin, isActif);
+                        String num = info.getString("numTel");
+                        Utilisateur utilisateur = new Utilisateur(id, pseudo, mdp, num);
 
                         ((MainModificationUtilisateur) context).affichage(utilisateur);
                     } catch (JSONException e) {

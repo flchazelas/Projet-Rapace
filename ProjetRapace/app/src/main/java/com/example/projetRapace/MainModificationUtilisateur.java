@@ -14,6 +14,7 @@ public class MainModificationUtilisateur extends AppCompatActivity {
 
     private EditText textPseudo;
     private EditText textMdp;
+    private EditText textNum;
     private Button validate;
     private Utilisateur u;
     private UtilisateurManagerDistant m;
@@ -25,6 +26,7 @@ public class MainModificationUtilisateur extends AppCompatActivity {
 
         textPseudo = findViewById(R.id.pseudo);
         textMdp = findViewById(R.id.password);
+        textNum = findViewById(R.id.numTel);
         validate = findViewById(R.id.buttonValidate);
 
         m = new UtilisateurManagerDistant(MainModificationUtilisateur.this);
@@ -44,10 +46,12 @@ public class MainModificationUtilisateur extends AppCompatActivity {
         u = utilisateur;
         textPseudo.setText(u.getPseudo_utilisateur());
         textMdp.setText(u.getMdp_utilisateur());
+        textNum.setText(u.getPhone());
+        Log.d("UTILISATEUR", String.valueOf(u.getId_utilisateur()));
         validate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Utilisateur uti = new Utilisateur(u.getId_utilisateur() , textPseudo.getText().toString(), textMdp.getText().toString());
+                Utilisateur uti = new Utilisateur(u.getId_utilisateur() , textPseudo.getText().toString(), textMdp.getText().toString(), textNum.getText().toString());
                 m.envoi("updateProfil", uti.convertionJSONArray());
             }
         });
