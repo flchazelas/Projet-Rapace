@@ -11,6 +11,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,8 +25,8 @@ import android.widget.Toast;
 import java.util.List;
 
 public class MainAdministrationUtilisateur extends AppCompatActivity {
+    private Intent intentSession;
 
-    private SessionManager session;
     private  UtilisateurManagerDistant m;
     private ListView listView;
     private Button boutonDesactiver;
@@ -39,16 +41,66 @@ public class MainAdministrationUtilisateur extends AppCompatActivity {
     private int id;
 
     private static final int CODE_ACTIVITY = 1;
+    private static final int MENU_QUIT = 1;
+    private static final int MENU_ADMIN = 2;
+    private static final int MENU_PROFIL = 3;
+
+    /**
+     * Création d'un menu d'Items dans la Barre du Haut de l'application
+     * Ajout de l'option de déconnexion
+     * */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_QUIT, 0, R.string.logout);
+        if(SessionManager.getInstance(this).isAdmin()) {
+            menu.add(0, MENU_ADMIN, 0, R.string.user_administration);
+        }
+        menu.add(0, MENU_PROFIL, 0, R.string.user_profile);
+        return true;
+    }
+
+    /**
+     * Gère le menu d'Items
+     * Pour l'appuie de Déconnexion appel finish() qui ferme l'activité courante
+     * */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_QUIT:
+
+                //ferme l'activité courante
+                SessionManager.getInstance(this).deconnexionSession();
+                finish();
+                return true;
+
+            case MENU_ADMIN:
+
+                //redirection vers MainAdministrationUtilisateur
+                intent = new Intent(MainAdministrationUtilisateur.this, MainAdministrationUtilisateur.class);
+                startActivity(intent);
+                SessionManager.getInstance(this).checkLogin();
+                return true;
+
+            case MENU_PROFIL:
+
+                //redirection vers MainModificationUtilisateur
+                intent = new Intent(MainAdministrationUtilisateur.this, MainModificationUtilisateur.class);
+                intent.putExtra("PSEUDO", SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO));
+                startActivityForResult(intent, CODE_ACTIVITY);
+                return true;
+        }
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_administration_utilisateur);
 
-        session = SessionManager.getInstance(this);
+        intentSession = new Intent(MainAdministrationUtilisateur.this, RapaceService.class);
+        startService(intentSession);
+        SessionManager.getInstance(this).checkLogin();
 
         m = new UtilisateurManagerDistant(MainAdministrationUtilisateur.this);
-        String pseudo = session.getDonneesSession().get(SessionManager.KEY_PSEUDO);
+        String pseudo = SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO);
         Utilisateur u = new Utilisateur(pseudo, "password");
         m.envoi("recupUtilisateurs", u.convertionJSONArray());
     }
@@ -56,11 +108,11 @@ public class MainAdministrationUtilisateur extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        session = SessionManager.getInstance(this);
+        startService(intentSession);
+        SessionManager.getInstance(this).checkLogin();
 
         m = new UtilisateurManagerDistant(MainAdministrationUtilisateur.this);
-        String pseudo = session.getDonneesSession().get(SessionManager.KEY_PSEUDO);
+        String pseudo = SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO);
         Utilisateur u = new Utilisateur(pseudo, "password");
         m.envoi("recupUtilisateurs", u.convertionJSONArray());
     }
@@ -153,6 +205,7 @@ public class MainAdministrationUtilisateur extends AppCompatActivity {
                 id = listeU.get(position).getId_utilisateur();
 
                 boutonDesactiver.setClickable(true);
+                boutonDesactiver.setBackgroundTintList(getColorStateList(R.color.colorFullWhite));
                 boutonDesactiver.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -163,6 +216,7 @@ public class MainAdministrationUtilisateur extends AppCompatActivity {
                 });
 
                 boutonSupprimer.setClickable(true);
+                boutonSupprimer.setBackgroundTintList(getColorStateList(R.color.colorFullWhite));
                 boutonSupprimer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -173,6 +227,7 @@ public class MainAdministrationUtilisateur extends AppCompatActivity {
                 });
 
                 boutonAdmin.setClickable(true);
+                boutonAdmin.setBackgroundTintList(getColorStateList(R.color.colorFullWhite));
                 boutonAdmin.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -183,6 +238,7 @@ public class MainAdministrationUtilisateur extends AppCompatActivity {
                 });
 
                 boutonModification.setClickable(true);
+                boutonModification.setBackgroundTintList(getColorStateList(R.color.colorFullWhite));
                 boutonModification.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

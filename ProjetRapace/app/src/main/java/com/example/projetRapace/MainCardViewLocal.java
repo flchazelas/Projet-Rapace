@@ -82,6 +82,7 @@ public class MainCardViewLocal extends BaseActivity {
                 //redirection vers MainAdministrationUtilisateur
                 intent = new Intent(MainCardViewLocal.this, MainAdministrationUtilisateur.class);
                 startActivity(intent);
+                SessionManager.getInstance(this).checkLogin();
                 return true;
 
             case MENU_PROFIL:
@@ -101,6 +102,7 @@ public class MainCardViewLocal extends BaseActivity {
 
         if(shouldExecuteOnResume){
             startService(intentSession);
+            SessionManager.getInstance(this).checkLogin();
 
             ajouterLocaux();
         } else{
@@ -147,6 +149,7 @@ public class MainCardViewLocal extends BaseActivity {
         // Lancement du Service de vérification de connexion
         intentSession = new Intent(MainCardViewLocal.this, RapaceService.class);
         startService(intentSession);
+        SessionManager.getInstance(this).checkLogin();
 
         //Ajout d'un local fictif
         ajouterLocaux();

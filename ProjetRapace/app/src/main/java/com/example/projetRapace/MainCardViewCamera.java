@@ -75,13 +75,21 @@ public class MainCardViewCamera extends BaseActivity {
             ((ImageButton) findViewById(R.id.buttonAlert)).setImageTintList(getColorStateList(R.color.colorFullWhite));
         }
     }
+    private static final int MENU_ADMIN = 2;
+    private static final int MENU_PROFIL = 3;
 
-        /**
-         * Création d'un menu d'Items dans la Barre du Haut de l'application
-         * Ajout de l'option de déconnexion
-         * */
+    private static final int CODE_ACTIVITY = 1;
+
+    /**
+     * Création d'un menu d'Items dans la Barre du Haut de l'application
+     * Ajout de l'option de déconnexion
+     * */
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_QUIT, 0, R.string.logout);
+        if(SessionManager.getInstance(this).isAdmin()) {
+            menu.add(0, MENU_ADMIN, 0, R.string.user_administration);
+        }
+        menu.add(0, MENU_PROFIL, 0, R.string.user_profile);
         return true;
     }
 
@@ -92,9 +100,26 @@ public class MainCardViewCamera extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_QUIT:
+
                 //ferme l'activité courante
                 SessionManager.getInstance(this).deconnexionSession();
                 finish();
+                return true;
+
+            case MENU_ADMIN:
+
+                //redirection vers MainAdministrationUtilisateur
+                intent = new Intent(MainCardViewCamera.this, MainAdministrationUtilisateur.class);
+                startActivity(intent);
+                SessionManager.getInstance(this).checkLogin();
+                return true;
+
+            case MENU_PROFIL:
+
+                //redirection vers MainModificationUtilisateur
+                intent = new Intent(MainCardViewCamera.this, MainModificationUtilisateur.class);
+                intent.putExtra("PSEUDO", SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO));
+                startActivityForResult(intent, CODE_ACTIVITY);
                 return true;
         }
         return false;
@@ -108,6 +133,7 @@ public class MainCardViewCamera extends BaseActivity {
             intentService = new Intent(MainCardViewCamera.this, CheckLocalNbActiveAlerts.class);
             intentService.putExtra("id_local",id);
             startService(intentService);
+            SessionManager.getInstance(this).checkLogin();
 
             startService(intentSession);
             ajouterCameras();
@@ -186,6 +212,7 @@ public class MainCardViewCamera extends BaseActivity {
                 // Lancement du Service de vérification de connexion
                 intentSession = new Intent(MainCardViewCamera.this, RapaceService.class);
                 startService(intentSession);
+                SessionManager.getInstance(this).checkLogin();
 
                 //Ajout d'une Caméra fictive
                 ajouterCameras();

@@ -103,6 +103,7 @@ public class CameraView extends BaseActivity {
             // Lancement du Service de vérification de connexion
             intentSession = new Intent(CameraView.this, RapaceService.class);
             startService(intentSession);
+            SessionManager.getInstance(this).checkLogin();
 
             final int id = intent.getIntExtra("id", -1);
 
@@ -319,6 +320,7 @@ public class CameraView extends BaseActivity {
         intentService.putExtra("alertStatus",check_result);
         intentService.putExtra("id_camera",id_camera);
         startService(intentService);
+        SessionManager.getInstance(this).checkLogin();
         super.onResume();
         if(mv != null)
             mv.startPlayback();

@@ -104,10 +104,10 @@ public class CheckLocalNbActiveAlerts extends IntentService {
     }
 
     public void stop(Intent name){
-        stopForeground(true);
-        handler.removeCallbacks(runnable);
-        handler.removeCallbacksAndMessages(runnable);
-        checkLoading.interrupt();
+//        stopForeground(true);
+//        handler.removeCallbacks(runnable);
+//        handler.removeCallbacksAndMessages(runnable);
+//        checkLoading.interrupt();
         this.stopService(name);
     }
     public static CheckLocalNbActiveAlerts getInstance() {

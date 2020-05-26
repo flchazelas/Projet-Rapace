@@ -40,8 +40,14 @@ import java.util.ArrayList;
 
 public class VueCamera extends BaseActivity {
     private static final int MENU_QUIT = 1;
+    private Intent intent;
     private boolean modif_camera_query_done;
     private boolean modif_camera_query_result;
+
+    private static final int MENU_ADMIN = 2;
+    private static final int MENU_PROFIL = 3;
+
+    private static final int CODE_ACTIVITY = 1;
 
     /**
      * Création d'un menu d'Items dans la Barre du Haut de l'application
@@ -49,6 +55,10 @@ public class VueCamera extends BaseActivity {
      * */
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_QUIT, 0, R.string.logout);
+        if(SessionManager.getInstance(this).isAdmin()) {
+            menu.add(0, MENU_ADMIN, 0, R.string.user_administration);
+        }
+        menu.add(0, MENU_PROFIL, 0, R.string.user_profile);
         return true;
     }
 
@@ -63,6 +73,22 @@ public class VueCamera extends BaseActivity {
                 //ferme l'activité courante
                 SessionManager.getInstance(this).deconnexionSession();
                 finish();
+                return true;
+
+            case MENU_ADMIN:
+
+                //redirection vers MainAdministrationUtilisateur
+                intent = new Intent(VueCamera.this, MainAdministrationUtilisateur.class);
+                startActivity(intent);
+                SessionManager.getInstance(this).checkLogin();
+                return true;
+
+            case MENU_PROFIL:
+
+                //redirection vers MainModificationUtilisateur
+                intent = new Intent(VueCamera.this, MainModificationUtilisateur.class);
+                intent.putExtra("PSEUDO", SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO));
+                startActivityForResult(intent, CODE_ACTIVITY);
                 return true;
         }
         return false;
@@ -89,6 +115,7 @@ public class VueCamera extends BaseActivity {
             // Lancement du Service de vérification de connexion
             Intent intentSession = new Intent(VueCamera.this, RapaceService.class);
             startService(intentSession);
+            SessionManager.getInstance(this).checkLogin();
 
             final Activity context = this;
 

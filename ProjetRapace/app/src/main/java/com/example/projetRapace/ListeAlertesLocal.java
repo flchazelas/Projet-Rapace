@@ -35,6 +35,7 @@ public class ListeAlertesLocal extends AppCompatActivity {
     private static final int MENU_QUIT = 1;
     private Intent intentSession;
     private Intent intentService;
+    private Intent intent;
     boolean shouldExecuteOnResume;
     private ProgressDialog mProgressDialog;
 
@@ -59,12 +60,21 @@ public class ListeAlertesLocal extends AppCompatActivity {
         }
     };
 
+    private static final int MENU_ADMIN = 2;
+    private static final int MENU_PROFIL = 3;
+
+    private static final int CODE_ACTIVITY = 1;
+
     /**
      * Création d'un menu d'Items dans la Barre du Haut de l'application
      * Ajout de l'option de déconnexion
      * */
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_QUIT, 0, R.string.logout);
+        if(SessionManager.getInstance(this).isAdmin()) {
+            menu.add(0, MENU_ADMIN, 0, R.string.user_administration);
+        }
+        menu.add(0, MENU_PROFIL, 0, R.string.user_profile);
         return true;
     }
 
@@ -77,7 +87,24 @@ public class ListeAlertesLocal extends AppCompatActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
+                SessionManager.getInstance(this).deconnexionSession();
                 finish();
+                return true;
+
+            case MENU_ADMIN:
+
+                //redirection vers MainAdministrationUtilisateur
+                intent = new Intent(ListeAlertesLocal.this, MainAdministrationUtilisateur.class);
+                startActivity(intent);
+                SessionManager.getInstance(this).checkLogin();
+                return true;
+
+            case MENU_PROFIL:
+
+                //redirection vers MainModificationUtilisateur
+                intent = new Intent(ListeAlertesLocal.this, MainModificationUtilisateur.class);
+                intent.putExtra("PSEUDO", SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO));
+                startActivityForResult(intent, CODE_ACTIVITY);
                 return true;
         }
         return false;
@@ -95,6 +122,7 @@ public class ListeAlertesLocal extends AppCompatActivity {
             // Lancement du Service de vérification de connexion
             intentSession = new Intent(ListeAlertesLocal.this, RapaceService.class);
             startService(intentSession);
+            SessionManager.getInstance(this).checkLogin();
 
             final int id = intent.getIntExtra("id", -1);
 
@@ -276,6 +304,7 @@ public class ListeAlertesLocal extends AppCompatActivity {
             intentService.putExtra("isChanged",isChanged);
             intentService.putExtra("id_local",id_local);
             startService(intentService);
+            SessionManager.getInstance(this).checkLogin();
         }else
             shouldExecuteOnResume = true;
         super.onResume();

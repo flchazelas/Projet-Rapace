@@ -58,12 +58,21 @@ public class MainAlerteActive extends AppCompatActivity {
 
     private int id_alerte;
 
+    private static final int MENU_ADMIN = 2;
+    private static final int MENU_PROFIL = 3;
+
+    private static final int CODE_ACTIVITY = 1;
+
     /**
      * Création d'un menu d'Items dans la Barre du Haut de l'application
      * Ajout de l'option de déconnexion
      * */
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_QUIT, 0, R.string.logout);
+        if(SessionManager.getInstance(this).isAdmin()) {
+            menu.add(0, MENU_ADMIN, 0, R.string.user_administration);
+        }
+        menu.add(0, MENU_PROFIL, 0, R.string.user_profile);
         return true;
     }
 
@@ -79,6 +88,22 @@ public class MainAlerteActive extends AppCompatActivity {
                 SessionManager.getInstance(this).deconnexionSession();
                 finish();
                 return true;
+
+            case MENU_ADMIN:
+
+                //redirection vers MainAdministrationUtilisateur
+                intent = new Intent(MainAlerteActive.this, MainAdministrationUtilisateur.class);
+                startActivity(intent);
+                SessionManager.getInstance(this).checkLogin();
+                return true;
+
+            case MENU_PROFIL:
+
+                //redirection vers MainModificationUtilisateur
+                intent = new Intent(MainAlerteActive.this, MainModificationUtilisateur.class);
+                intent.putExtra("PSEUDO", SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO));
+                startActivityForResult(intent, CODE_ACTIVITY);
+                return true;
         }
         return false;
     }
@@ -92,6 +117,7 @@ public class MainAlerteActive extends AppCompatActivity {
         // Lancement du Service de vérification de connexion
         intentService = new Intent(MainAlerteActive.this, RapaceService.class);
         startService(intentService);
+        SessionManager.getInstance(this).checkLogin();
 
         Intent intent = getIntent();
         //Récupération des champs de données
