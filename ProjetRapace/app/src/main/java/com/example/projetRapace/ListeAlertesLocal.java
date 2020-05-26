@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -110,7 +111,6 @@ public class ListeAlertesLocal extends AppCompatActivity {
                         TextView text1 = (TextView) view.findViewById(android.R.id.text1);
                         TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 
-                        boolean b = alertesActives.get(position) == null;
                         Log.d("CamName", alertesActives.get(position).CamName);
 
                         text1.setText(alertesActives.get(position).CamName);
@@ -140,6 +140,14 @@ public class ListeAlertesLocal extends AppCompatActivity {
                 };
 
                 ((ListView) findViewById(R.id.listAlertesEnCours)).setAdapter(alertesEnCoursCamName);
+                ((ListView) findViewById(R.id.listAlertesEnCours)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(context, MainAlerteActive.class);
+                        intent.putExtra("id", alertesActives.get(position).getId());
+                        startActivity(intent);
+                    }
+                });
                 ((ListView) findViewById(R.id.listAlertesFinies)).setAdapter(alertesFiniesCamName);
 
                 intentService = new Intent(ListeAlertesLocal.this, CheckLocalAlerteLists.class);

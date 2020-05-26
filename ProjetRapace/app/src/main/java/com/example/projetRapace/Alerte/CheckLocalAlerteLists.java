@@ -106,6 +106,11 @@ public class CheckLocalAlerteLists  extends IntentService {
                             Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_actif_done : " + check_actif_done + ") (check_nonactif_done : "+check_nonactif_done);
                             if (checkLoading.interrupted())
                                 return;
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                         Log.d("CheckLocalAlerteLists", "(Waiting for checking to end) -> (check_actif_done : " + check_actif_done + ") (check_nonactif_done : "+ check_nonactif_done + ")");
 
@@ -122,7 +127,7 @@ public class CheckLocalAlerteLists  extends IntentService {
             }
         };
 
-        handler.postDelayed(runnable, 2000);
+        handler.postDelayed(runnable, 0);
     }
 
 

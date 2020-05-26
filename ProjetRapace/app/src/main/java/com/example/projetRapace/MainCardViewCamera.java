@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainCardViewCamera extends BaseActivity {
-
     private int nbActiveAlert = -1;
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -93,7 +92,6 @@ public class MainCardViewCamera extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_QUIT:
-
                 //ferme l'activité courante
                 SessionManager.getInstance(this).deconnexionSession();
                 finish();

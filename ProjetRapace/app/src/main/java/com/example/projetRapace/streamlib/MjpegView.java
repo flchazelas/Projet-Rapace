@@ -253,8 +253,8 @@ public class MjpegView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    public void screenshot(int idCam, String filename){
-        recorder.screenshot(idCam,filename,bm);
+    public void screenshot(int id_alerte, String filename){
+        recorder.screenshot(id_alerte,filename,bm);
     }
 
     public Bitmap getBitmap(){ return bm; }

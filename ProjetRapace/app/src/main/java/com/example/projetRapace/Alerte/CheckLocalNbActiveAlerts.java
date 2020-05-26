@@ -79,6 +79,11 @@ public class CheckLocalNbActiveAlerts extends IntentService {
                             Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
                             if (checkLoading.interrupted())
                                 return;
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                         Log.d("CheckLocalNbActiveAlerts", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
 
@@ -95,7 +100,7 @@ public class CheckLocalNbActiveAlerts extends IntentService {
             }
         };
 
-        handler.postDelayed(runnable, 2000);
+        handler.postDelayed(runnable, 0);
     }
 
     public void stop(Intent name){

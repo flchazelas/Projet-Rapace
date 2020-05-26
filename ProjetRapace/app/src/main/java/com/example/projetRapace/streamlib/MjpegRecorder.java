@@ -132,7 +132,7 @@ public class MjpegRecorder {
         return false;
     }
 
-    public boolean saveRecord(int idCam, ArrayList<Bitmap> array, long timeLenght){
+    public boolean saveRecord(int id_alerte, ArrayList<Bitmap> array, long timeLenght){
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File mjpegFile;
         try {
@@ -152,9 +152,9 @@ public class MjpegRecorder {
                 @Override
                 public void onQueryFinished(String operation, String output) {
                     Log.d("saveRecord", "(onQueryFinished) -> "+ operation);
-                    if(operation.equals(VideoDBManager.VIDEO_DB_ADDFORCAMERA)){
+                    if(operation.equals(VideoDBManager.VIDEO_DB_ADDFORALERTE)){
                         try {
-                            Log.d("saveRecord", "(retour VIDEO_DB_ADD) -> "+ output);
+                            Log.d("saveRecord", "(retour VIDEO_DB_ADDFORALERTE) -> "+ output);
                             if(output == "INSERT_SUCCESSFUL")
                                 result = true;
                             else
@@ -167,7 +167,7 @@ public class MjpegRecorder {
                 }
             };
             Video v = new Video("Data/videos/"+mjpegFile.getName());
-            VideoDBManager.addVideoForCamera(callback,idCam, v);
+            VideoDBManager.addVideoForAlerte(callback,id_alerte, v);
 
             return true;
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public class MjpegRecorder {
         }
     }
 
-    public boolean screenshot(int idCam, String fileName, Bitmap b){
+    public boolean screenshot(int id_alerte, String fileName, Bitmap b){
         FileOutputStream fileOutputStream = null;
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
@@ -203,7 +203,7 @@ public class MjpegRecorder {
             @Override
             public void onQueryFinished(String operation, String output) {
                 Log.d("screenshot", "(onQueryFinished) -> "+ operation);
-                if(operation.equals(ImageDBManager.IMAGE_DB_ADDFORCAMERA)){
+                if(operation.equals(ImageDBManager.IMAGE_DB_ADDFORALERTE)){
                     try {
                         Log.d("screenshot", "(retour IMAGE_DB_ADD_FOR_CAMERA) -> "+ output);
                         if(output == "INSERT_SUCCESSFUL")
@@ -219,7 +219,7 @@ public class MjpegRecorder {
         };
 
         Image i = new Image("Data/images/"+file.getName());
-        ImageDBManager.addImageForCamera(callback,idCam,i);
+        ImageDBManager.addImageForAlerte(callback,id_alerte,i);
 
         return true;
     }

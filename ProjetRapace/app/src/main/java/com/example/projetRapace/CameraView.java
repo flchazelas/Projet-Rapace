@@ -259,13 +259,33 @@ public class CameraView extends BaseActivity {
                                             context.runOnUiThread(new Runnable(){
                                                 @Override
                                                 public void run() {
-                                                    if(add_result)
-                                                        Toast.makeText(context, "Création de l'alerte réussi, redirection ... ",Toast.LENGTH_LONG).show();
+                                                    if (mProgressDialog != null)
+                                                        mProgressDialog.dismiss();
+
+                                                    if(add_result){
+                                                        AlerteDBManager.AlerteDBCallbackInterface callbackImage = new AlerteDBManager.AlerteDBCallbackInterface() {
+                                                            @Override
+                                                            public void onQueryFinished(String operation, String output) {
+                                                                Log.d("createAlert", "(onQueryFinished) -> "+ operation);
+                                                                if(operation.equals(AlerteDBManager.ALERTE_DB_GETCURRENTFORCAMERA)){
+                                                                    try {
+                                                                        Log.d("createAlert", "(retour ALERTE_DB_ADD) -> " + output);
+                                                                        if(output.equals("INSERT_SUCCESSFUL"))
+                                                                            add_result = true;
+                                                                        else
+                                                                            add_result = false;
+                                                                        add_done = true;
+                                                                    } catch (Exception e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                }
+                                                            }
+                                                        };
+                                                        AlerteDBManager.getCurrentForCamera(callbackImage,id_camera);
+                                                    }
                                                     else
                                                         Toast.makeText(context, "Erreur lors de la création de l'alerte.",Toast.LENGTH_LONG).show();
 
-                                                    if (mProgressDialog != null)
-                                                        mProgressDialog.dismiss();
                                                 }
                                             });
                                         }

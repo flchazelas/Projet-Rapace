@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/firstRelative"
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="200dp">
 
         <TextView
             android:id="@+id/textLocal"
@@ -50,39 +50,39 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/appellerNumLocal"
-            android:text="Numéro du Local"
+            android:text="Appeler le client"
             android:layout_marginTop="20dp"
             android:layout_below="@+id/textCamera"
             android:layout_marginLeft="20dp"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/localisation"
-            android:text="Localisation"
-            android:layout_marginTop="10dp"
-            android:layout_below="@+id/appellerNumLocal"
-            android:layout_marginLeft="20dp"/>
+<!--        <Button-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/localisation"-->
+<!--            android:text="Localisation"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:layout_below="@+id/appellerNumLocal"-->
+<!--            android:layout_marginLeft="20dp"/>-->
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ignorerAlerte"
             android:text="@string/ignore_alert"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="50dp"
-            android:layout_below="@+id/localisation"/>
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="40dp"
+            android:layout_below="@+id/appellerNumLocal"/>
 
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/declencherAlarme"
-            android:text="@string/trigger_alarm"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="50dp"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/localisation"/>
+<!--        <Button-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:id="@+id/declencherAlarme"-->
+<!--            android:text="@string/trigger_alarm"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_marginRight="50dp"-->
+<!--            android:layout_alignParentRight="true"-->
+<!--            android:layout_below="@+id/localisation"/>-->
 
         <RelativeLayout
             android:layout_width="wrap_content"
