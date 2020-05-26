@@ -43,6 +43,7 @@ public class MainCardViewCamera extends BaseActivity {
     private List<Object> cameras = new ArrayList<Object>();
     private Button buttonAjout;
     private Intent intent;
+    private Intent intentSession;
     private AdapterCardView adapterCardView;
 
     private static final int MENU_QUIT = 1;
@@ -77,7 +78,7 @@ public class MainCardViewCamera extends BaseActivity {
         super.onResume();
 
         if(shouldExecuteOnResume){
-            SessionManager.getInstance(this).checkLogin();
+            startService(intentSession);
             ajouterCameras();
         } else{
             shouldExecuteOnResume = true;
@@ -113,8 +114,7 @@ public class MainCardViewCamera extends BaseActivity {
                     @Override
                     public void onClick(View view) {
                         //Check si connecté et relance le service
-                        //session.checkLogin();
-                        //startService(intent);
+                        startService(intentSession);
 
                         findViewById(R.id.addLocalLayout).setVisibility(View.VISIBLE);
                     }
@@ -138,11 +138,8 @@ public class MainCardViewCamera extends BaseActivity {
                 findViewById(R.id.addLocalLayout).setVisibility(View.GONE);
 
                 // Lancement du Service de vérification de connexion
-                intent = new Intent(MainCardViewCamera.this, RapaceService.class);
-                startService(intent);
-
-                // Lancement du Session Manager pour stocker l'utilisateur
-                SessionManager.getInstance(this).checkLogin();
+                intentSession = new Intent(MainCardViewCamera.this, RapaceService.class);
+                startService(intentSession);
 
                 //Ajout d'une Caméra fictive
                 ajouterCameras();

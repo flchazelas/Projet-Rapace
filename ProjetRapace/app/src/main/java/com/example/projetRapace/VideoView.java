@@ -30,6 +30,7 @@ public class VideoView extends BaseActivity {
     private MjpegView mv;
     private static final int MENU_QUIT = 1;
     private SessionManager session;
+    private Intent intentSession;
 
     /**
      * Création d'un menu d'Items dans la Barre du Haut de l'application
@@ -72,12 +73,8 @@ public class VideoView extends BaseActivity {
 
         if(intent != null) {
             // Lancement du Service de vérification de connexion
-            intent = new Intent(VideoView.this, RapaceService.class);
-            startService(intent);
-
-            // Lancement du Session Manager pour stocker l'utilisateur
-            session = new SessionManager(getApplicationContext());
-            session.checkLogin();
+            intentSession = new Intent(VideoView.this, RapaceService.class);
+            startService(intentSession);
 
             final String ip = intent.getStringExtra("ip");
             if (ip != null) {

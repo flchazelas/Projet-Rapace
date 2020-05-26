@@ -19,7 +19,6 @@ import com.squareup.picasso.Picasso;
 public class ImageViewActivity extends BaseActivity {
 
     private static final int MENU_QUIT = 1;
-    private SessionManager session;
 
     /**
      * Création d'un menu d'Items dans la Barre du Haut de l'application
@@ -65,14 +64,8 @@ public class ImageViewActivity extends BaseActivity {
             intent = new Intent(ImageViewActivity.this, RapaceService.class);
             startService(intent);
 
-            // Lancement du Session Manager pour stocker l'utilisateur
-            session = new SessionManager(getApplicationContext());
-            session.checkLogin();
-
             final String ip = intent.getStringExtra("ip");
             if (ip != null) {
-
-
                 final android.widget.ImageView imageView;
                 imageView = (android.widget.ImageView) findViewById(R.id.imageView);
                 Picasso.get().load(ip).into(imageView);
@@ -83,6 +76,6 @@ public class ImageViewActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        session.deconnexionSession();
+        SessionManager.getInstance(this).deconnexionSession();
     }
 }

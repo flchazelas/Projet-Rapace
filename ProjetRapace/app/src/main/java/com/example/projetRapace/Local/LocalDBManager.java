@@ -37,6 +37,7 @@ public class LocalDBManager implements AsyncReponse {
 
     @Override
     public void processFinish(String output) {
+        Log.d("LocalDBManager", "(processFinish " + output + ")");
         String[] msg = output.split("%");
         if(msg.length > 1){
             try {

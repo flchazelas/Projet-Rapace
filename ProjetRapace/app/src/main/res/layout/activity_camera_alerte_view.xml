@@ -22,13 +22,23 @@
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentBottom="true">
 
-                <ImageButton
-                    android:id="@+id/alertButton"
+                <Button
+                    android:id="@+id/recordControl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:backgroundTint="#EF7F7F"
-                    app:srcCompat="@android:drawable/ic_dialog_alert" />
+                    android:text="Start Recording"></Button>
+
+                <Button
+                    android:id="@+id/screenshotControl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Screenshot"></Button>
+
+                <Button
+                    android:id="@+id/exitControl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Back"></Button>
             </LinearLayout>
         </RelativeLayout>
 

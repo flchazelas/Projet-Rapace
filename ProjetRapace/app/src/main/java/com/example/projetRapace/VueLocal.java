@@ -82,8 +82,6 @@ public class VueLocal extends BaseActivity {
             // Lancement du Service de vérification de connexion
             intentSession = new Intent(VueLocal.this, RapaceService.class);
             startService(intentSession);
-            // Lancement du Session Manager pour stocker l'utilisateur
-            SessionManager.getInstance(this).checkLogin();
 
             if(id != -1){
                 id_local = id;

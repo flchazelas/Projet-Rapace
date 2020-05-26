@@ -40,7 +40,6 @@ import java.util.ArrayList;
 
 public class VueCamera extends BaseActivity {
     private static final int MENU_QUIT = 1;
-    private SessionManager session;
     private boolean modif_camera_query_done;
     private boolean modif_camera_query_result;
 
@@ -62,7 +61,7 @@ public class VueCamera extends BaseActivity {
             case MENU_QUIT:
 
                 //ferme l'activité courante
-                session.deconnexionSession();
+                SessionManager.getInstance(this).deconnexionSession();
                 finish();
                 return true;
         }
@@ -90,10 +89,6 @@ public class VueCamera extends BaseActivity {
             // Lancement du Service de vérification de connexion
             Intent intentSession = new Intent(VueCamera.this, RapaceService.class);
             startService(intentSession);
-
-            // Lancement du Session Manager pour stocker l'utilisateur
-            session = new SessionManager(getApplicationContext());
-            session.checkLogin();
 
             final Activity context = this;
 

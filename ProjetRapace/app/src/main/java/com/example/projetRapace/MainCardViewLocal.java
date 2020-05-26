@@ -100,7 +100,6 @@ public class MainCardViewLocal extends BaseActivity {
 
         if(shouldExecuteOnResume){
             startService(intentSession);
-            SessionManager.getInstance(this).checkLogin();
 
             ajouterLocaux();
         } else{
@@ -145,8 +144,6 @@ public class MainCardViewLocal extends BaseActivity {
         // Lancement du Service de vérification de connexion
         intentSession = new Intent(MainCardViewLocal.this, RapaceService.class);
         startService(intentSession);
-        //Vérifie si l'utilisateur est connecté
-        SessionManager.getInstance(this).checkLogin();
 
         //Ajout d'un local fictif
         ajouterLocaux();
@@ -170,7 +167,7 @@ public class MainCardViewLocal extends BaseActivity {
             @Override
             public void onClick(View view) {
                 //Check si connecté et relance le service
-                SessionManager.getInstance(context).checkLogin();
+                startService(intentSession);
 
                 findViewById(R.id.addLocalLayout).setVisibility(View.VISIBLE);
             }
@@ -182,7 +179,7 @@ public class MainCardViewLocal extends BaseActivity {
      * */
     private void ajouterLocaux() {
         locaux.clear();
-        mProgressDialog = ProgressDialog.show(this, "Chargement...", " Ajout du Local ...");
+        mProgressDialog = ProgressDialog.show(this, "Chargement...", " Chargement des locaux ...");
         mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
         final Activity context = this;
 
@@ -213,15 +210,8 @@ public class MainCardViewLocal extends BaseActivity {
                 }
             }
         };
-        /*if(session.user_id ==-1){
-            Toast.makeText(context, "Session invalide.\nVeuillez réessayer ou relancer l'application.",Toast.LENGTH_LONG).show();
-            return;
-        }*/
-        //session.checkLogin();
 
-        SessionManager.getInstance(this).checkLogin();
-        Log.i("onResume", "id = " + Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
-        Log.i("onResume", "id = " + SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_PSEUDO));
+        startService(intentSession);
         LocalDBManager.getByUser(callback, Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
 
         Thread checkLoading = new Thread(new Runnable(){
@@ -306,7 +296,7 @@ public class MainCardViewLocal extends BaseActivity {
         Local v = new Local(name,address,number);
         Log.d("saveRecord", "(retour USER_ID) -> "+ SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID));
 
-        SessionManager.getInstance(this).checkLogin();
+        startService(intentSession);
         LocalDBManager.addLocal(callback,v, Integer.parseInt(SessionManager.getInstance(this).getDonneesSession().get(SessionManager.KEY_ID)));
 
         Thread checkLoading = new Thread(new Runnable(){
