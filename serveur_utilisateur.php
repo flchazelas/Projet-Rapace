@@ -16,7 +16,7 @@
 				$mdp = password_hash($donnee[1], PASSWORD_BCRYPT);
 				$num = $donnee[5];
 				$dateAccess = $donnee[6];
-				list($annee, $mois, $jour, $heure, $minute, $seconde) = sscanf($dateAccess, "$d-%d-%d %d:%d:%d");
+				list($annee, $mois, $jour, $heure, $minute, $seconde) = sscanf($dateAccess, "%d-%d-%d %d:%d:%d");
 
 				//insertion BDD
 				print ("enregistrement%");
@@ -150,7 +150,7 @@
 				$donnee = json_decode($donnees);
 				$pseudo = $donnee[0];
 				$dateAccess = $donnee[6];
-				list($annee, $mois, $jour, $heure, $minute, $seconde) = sscanf($dateAccess, "$d-%d-%d %d:%d:%d");
+				list($annee, $mois, $jour, $heure, $minute, $seconde) = sscanf($dateAccess, "%d-%d-%d %d:%d:%d");
 
 				//recherche de l'utilisateur en BDD
 				print ("changeDate%");
@@ -298,6 +298,7 @@
 				$pseudo = $donnee[0];
 				$mdp = $donnee[1];
 				$id = $donnee[2];
+				$num = $donnee[5];
 
 				print ("updateProfil%");
 				//recherche de l'utilisateur en BDD
@@ -310,6 +311,12 @@
 					if($ligne["password"] != $mdp){
 						$mdp = password_hash($donnee[1], PASSWORD_BCRYPT);
 						$requete = "UPDATE users SET password = '$mdp' WHERE id='$id'";
+						//print($requete);
+						$req = $connexion->prepare($requete);
+						$req->execute();
+					}
+					if($ligne["numTel"] != $num){
+						$requete = "UPDATE users SET numTel = '$num' WHERE id='$id'";
 						//print($requete);
 						$req = $connexion->prepare($requete);
 						$req->execute();

@@ -53,6 +53,25 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/pseudo"/>
 
+        <TextView
+            android:id="@+id/textNum"
+            android:layout_width="210px"
+            android:layout_height="102px"
+            android:layout_below="@id/password"
+            android:gravity="center"
+            android:text="@string/phone_number"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/numTel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/phone_number"
+            android:inputType="phone"
+            android:layout_toRightOf="@id/textNum"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/password"/>
+
         <Button
             android:id="@+id/buttonValidate"
             android:layout_width="wrap_content"
@@ -60,7 +79,7 @@
             android:text="@string/validate"
             android:textSize="12sp"
             android:gravity="center"
-            android:layout_below="@id/password"
+            android:layout_below="@id/numTel"
             android:layout_centerInParent="true"/>
 
     </RelativeLayout>

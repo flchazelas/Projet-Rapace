@@ -49,6 +49,7 @@ public class Utilisateur {
     }
 
     public Utilisateur(int id, String pseudo, String mdp, String phone) {
+        this.id_utilisateur = id;
         this.pseudo_utilisateur=pseudo;
         this.mdp_utilisateur=mdp;
         this.phone = phone;
