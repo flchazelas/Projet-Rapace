@@ -15,8 +15,11 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 
 public class CheckLocalNbActiveAlerts extends IntentService {
+    private static CheckLocalNbActiveAlerts instance;
     public Context context = this;
     public Handler handler = null;
+    private Runnable runnable;
+    private Thread checkLoading;
 
     private int id_local = -1;
     private int nbActiveAlert = -1;
@@ -34,12 +37,13 @@ public class CheckLocalNbActiveAlerts extends IntentService {
     }
     @Override
     protected void onHandleIntent(Intent intent) {
+        this.instance = this;
         nbActiveAlert = intent.getIntExtra("nbActiveAlert",-1);
         id_local = intent.getIntExtra("id_local",-1);
         HandlerThread handlerThread = new HandlerThread("background-thread");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
-        final Runnable runnable = new Runnable() {
+        Runnable runnable = new Runnable() {
             public void run() {
                 handler.postDelayed(this, 2000);
 
@@ -54,7 +58,7 @@ public class CheckLocalNbActiveAlerts extends IntentService {
                                 Log.d("CheckLocalNbActiveAlerts", "(retour ALERTE_DB_GETLOCALACTIVEALERTS) -> "+ output);
 
                                 JSONArray jsonResult = new JSONArray(output);
-                                Log.d("MainCardViewCamera", "(retour CAMERA_DB_GETBYLOCAL) -> "+ Camera.camerasFromJSON(jsonResult));
+                                Log.d("MainCardViewCamera", "(retour CAMERA_DB_GETBYLOCAL) -> "+ Alerte.alertesFromJSON(jsonResult));
                                 alertes.clear();
                                 for(Alerte a : Alerte.alertesFromJSON(jsonResult))
                                     alertes.add(a);
@@ -68,12 +72,14 @@ public class CheckLocalNbActiveAlerts extends IntentService {
                 };
                 AlerteDBManager.getLocalActiveAlerts(callback,id_local);
 
-                Thread checkLoading = new Thread(new Runnable(){
+                checkLoading = new Thread(new Runnable(){
                     @Override
                     public void run() {
-                        while(!(check_done))
-                            Log.d("CheckLocalNbActiveAlerts", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
-
+                        while(!(check_done)){
+                            Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
+                            if (checkLoading.interrupted())
+                                return;
+                        }
                         Log.d("CheckLocalNbActiveAlerts", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
 
                         if(alertes.size() != nbActiveAlert){
@@ -90,5 +96,16 @@ public class CheckLocalNbActiveAlerts extends IntentService {
         };
 
         handler.postDelayed(runnable, 2000);
+    }
+
+    public void stop(Intent name){
+        stopForeground(true);
+        handler.removeCallbacks(runnable);
+        handler.removeCallbacksAndMessages(runnable);
+        checkLoading.interrupt();
+        this.stopService(name);
+    }
+    public static CheckLocalNbActiveAlerts getInstance() {
+        return instance;
     }
 }

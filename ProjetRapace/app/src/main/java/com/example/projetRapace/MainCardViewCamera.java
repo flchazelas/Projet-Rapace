@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -61,6 +62,8 @@ public class MainCardViewCamera extends BaseActivity {
     private ImageButton buttonAjout;
     private Intent intent;
     private Intent intentSession;
+    private Intent intentService;
+    private Service service;
     private AdapterCardView adapterCardView;
 
     private static final int MENU_QUIT = 1;
@@ -136,7 +139,7 @@ public class MainCardViewCamera extends BaseActivity {
                 ((LinearLayout) findViewById(R.id.layoutNumero)).setVisibility(View.GONE);
                 buttonAjout = (ImageButton) findViewById(R.id.buttonAdd);
 
-                Intent intentService = new Intent(MainCardViewCamera.this, CheckLocalNbActiveAlerts.class);
+                intentService = new Intent(MainCardViewCamera.this, CheckLocalNbActiveAlerts.class);
                 intentService.putExtra("id_local",id_local);
                 startService(intentService);
 
@@ -144,7 +147,10 @@ public class MainCardViewCamera extends BaseActivity {
                 ((ImageButton) findViewById(R.id.buttonAlert)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //start activity
+                        Intent intent = new Intent(context, ListeAlertesLocal.class);
+
+                        intent.putExtra("id", id_local);
+                        startActivity(intent);
                     }
                 });
                 //Méthode onClick() du bouton d'ajout d'une Caméra
@@ -361,5 +367,11 @@ public class MainCardViewCamera extends BaseActivity {
     protected void onStop() {
         super.onStop();
         unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        CheckLocalNbActiveAlerts.getInstance().stop(intentService);
+        super.onDestroy();
     }
 }

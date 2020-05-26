@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ListeAlertesLocal">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        >
+        <LinearLayout
+            android:id="@+id/layoutAlertesActives"
+            android:layout_marginTop="20dp"
+            android:layout_width="300dp"
+            android:layout_height="250dp"
+            android:weightSum="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_alignParentTop="true">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.1"
+                android:text="Liste des Alertes en cours"
+                />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/listAlertesEnCours"
+                android:layout_weight="0.9"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutAlertesNonActives"
+            android:layout_width="300dp"
+            android:layout_height="250dp"
+            android:weightSum="1"
+            android:layout_below="@id/layoutAlertesActives"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.1"
+                android:text="List des Alertes finies"/>
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/listAlertesFinies"
+                android:layout_weight="0.9"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/buttonRetour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_alignParentBottom="true"
+            android:text="Retour a la liste des caméras" />
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

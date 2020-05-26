@@ -47,6 +47,7 @@ public class CameraView extends BaseActivity {
     private MjpegView mv;
     private static final int MENU_QUIT = 1;
     private Intent intentSession;
+    private Intent intentService;
     private ProgressDialog mProgressDialog;
 
     private int id_camera;
@@ -163,7 +164,7 @@ public class CameraView extends BaseActivity {
                 context.runOnUiThread(new Runnable(){
                     @Override
                     public void run() {
-                        Intent intentService = new Intent(CameraView.this, CheckNewAlertService.class);
+                        intentService = new Intent(CameraView.this, CheckNewAlertService.class);
                         intentService.putExtra("alertStatus",check_result);
                         intentService.putExtra("id_camera",id_camera);
                         startService(intentService);
@@ -310,5 +311,11 @@ public class CameraView extends BaseActivity {
     protected void onStop() {
         super.onStop();
         unregisterReceiver(broadcastReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        CheckNewAlertService.getInstance().stop(intentService);
+        super.onDestroy();
     }
 }

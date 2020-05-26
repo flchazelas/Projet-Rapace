@@ -17,6 +17,8 @@ public class Alerte {
     private String dateDebut;
     private String dateFin;
 
+    public String CamName = "";
+
     public Alerte(int id,boolean isActive, String dateDebut){
         this.id = id;
         this.isActive = isActive;
@@ -73,6 +75,8 @@ public class Alerte {
         Alerte a;
         try {
             a = new Alerte(jsonObject.getInt("id"),jsonObject.getInt("isActive") != 0,jsonObject.getString("dateDebut"),jsonObject.getString("dateFin"));
+            if(jsonObject.has("CamName"))
+                a.CamName = jsonObject.getString("CamName");
             return a;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -90,6 +94,8 @@ public class Alerte {
             try {
                 object = jsonArray.getJSONObject(i);
                 alerte = new Alerte(object.getInt("id"),object.getInt("isActive") != 0,object.getString("dateDebut"),object.getString("dateFin"));
+                if(object.has("CamName"))
+                    alerte.CamName = object.getString("CamName");
                 alertes.add(alerte);
             } catch (JSONException e) {
                 e.printStackTrace();

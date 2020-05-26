@@ -9,8 +9,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class CheckNewAlertService extends IntentService {
+    private static CheckNewAlertService instance;
     public Context context = this;
     public Handler handler = null;
+    private Runnable runnable;
+    private Thread checkLoading;
 
     private int id_camera = -1;
     private boolean isThereActiveAlert = false;
@@ -26,6 +29,7 @@ public class CheckNewAlertService extends IntentService {
     }
     @Override
     protected void onHandleIntent(Intent intent) {
+        this.instance = this;
 
         Log.d("CheckNewAlertService", "(RUN)");
         isThereActiveAlert = intent.getBooleanExtra("alertStatus",false);
@@ -33,7 +37,7 @@ public class CheckNewAlertService extends IntentService {
         HandlerThread handlerThread = new HandlerThread("background-thread");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
-        final Runnable runnable = new Runnable() {
+        Runnable runnable = new Runnable() {
             public void run() {
                 handler.postDelayed(this, 2000);
                 Log.d("CheckNewAlertService", "(RUN)");
@@ -62,11 +66,14 @@ public class CheckNewAlertService extends IntentService {
                 };
                 AlerteDBManager.getCurrentForCamera(callback,id_camera);
 
-                Thread checkLoading = new Thread(new Runnable(){
+                checkLoading = new Thread(new Runnable(){
                     @Override
                     public void run() {
-                        while(!(check_done))
+                        while(!(check_done)){
                             Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
+                            if (checkLoading.interrupted())
+                                return;
+                        }
 
                         Log.d("CheckNewAlertService", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
                         if(check_result != isThereActiveAlert){
@@ -83,5 +90,17 @@ public class CheckNewAlertService extends IntentService {
         };
 
         handler.postDelayed(runnable, 2000);
+    }
+
+    public void stop(Intent name){
+        stopForeground(true);
+        handler.removeCallbacks(runnable);
+        handler.removeCallbacksAndMessages(runnable);
+        checkLoading.interrupt();
+        this.stopService(name);
+    }
+
+    public static CheckNewAlertService getInstance() {
+        return instance;
     }
 }
