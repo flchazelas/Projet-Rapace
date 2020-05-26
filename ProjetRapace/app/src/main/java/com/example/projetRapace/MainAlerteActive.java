@@ -81,6 +81,21 @@ public class MainAlerteActive extends AppCompatActivity {
         startService(intentService);
 
         Intent intent = getIntent();
+        listViewUser = findViewById(R.id.listUserNum);
+        listViewActions = findViewById(R.id.listActions);
+        listViewIV = findViewById(R.id.listIV);
+        /*
+        //A enlever quand tu auras récup la liste des utilisateurs
+        List<Utilisateur> listeU = new ArrayList<>();
+        listeU.add(new Utilisateur(0, "Fred", "fred", "0635482569"));
+        listeU.add(new Utilisateur(1, "Gile", "gile", "0745825696"));
+        listeU.add(new Utilisateur(2, "Daniel", "daniel", "0645859635"));
+        this.recupListeUtilisateurs(listeU);*/
+
+        UtilisateurManagerDistant m = new UtilisateurManagerDistant(MainAlerteActive.this);
+        ArrayList list = new ArrayList();
+        list.add(10);
+        m.envoi("recupNumUtilisateur", new JSONArray(list));
 
         //Récupération des champs de données
         if(intent != null) {

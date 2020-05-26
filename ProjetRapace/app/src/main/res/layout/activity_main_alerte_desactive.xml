@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/firstRelative"
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+
+        <TextView
+            android:id="@+id/textLocal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nom Local : "
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:id="@+id/nomLocal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Local"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/textLocal"/>
+
+        <TextView
+            android:id="@+id/textCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nom Caméra : "
+            android:layout_below="@+id/textLocal"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:id="@+id/nomCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Caméra"
+            android:layout_below="@+id/textLocal"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/textCamera"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textDebut"
+            android:text="Date Début : "
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="50dp"
+            android:layout_below="@+id/nomCamera"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/debut"
+            android:text="Date"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@id/textDebut"
+            android:layout_below="@+id/nomCamera"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textFin"
+            android:text="Date Fin : "
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/fin"
+            android:layout_below="@+id/nomCamera"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fin"
+            android:text="Fin"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/nomCamera"/>
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/firstRelative">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/secondRelative"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/textListeActions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Liste Actions"
+                    android:textColor="#F8000000"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/textType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Type"
+                    android:textColor="#F8000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"
+                    android:layout_below="@+id/textListeActions"/>
+
+                <TextView
+                    android:id="@+id/textDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date Effectuée"
+                    android:textColor="#F8000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toRightOf="@+id/textType"
+                    android:layout_below="@+id/textListeActions"/>
+
+                <TextView
+                    android:id="@+id/textUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Utilisateur"
+                    android:textColor="#F8000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@+id/textDate"
+                    android:layout_below="@+id/textListeActions"/>
+
+                <TextView
+                    android:id="@+id/textDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Description"
+                    android:textColor="#F8000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toRightOf="@+id/textUser"
+                    android:layout_below="@+id/textListeActions"/>
+
+                <ListView
+                    android:id="@+id/listActions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textType"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/thirdRelative"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:layout_below="@+id/secondRelative">
+
+                <TextView
+                    android:id="@+id/textListeIV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Liste Images/Vidéos"
+                    android:textColor="#F8000000"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <ListView
+                    android:id="@+id/listIV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textListeIV"/>
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
