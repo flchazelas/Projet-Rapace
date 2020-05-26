@@ -70,7 +70,7 @@ public class NotificationHelper extends ContextWrapper {
         Context context = getApplicationContext();
 
         /* Lien avec l'activité à ouvrir : ici MainActivity */
-        Intent notificationIntent = new Intent(context, MainAlerte.class);
+        Intent notificationIntent = new Intent(context, MainAlerteActive.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context, 456, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 

@@ -98,7 +98,7 @@ public class MainAdministrationUtilisateur extends AppCompatActivity {
                 {
                     LayoutInflater li = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     //le layout représentant la ligne dans le listView
-                    view = li.inflate(R.layout.ligne_liste, null);
+                    view = li.inflate(R.layout.ligne_liste_num, null);
                 }
                 TextView text = (TextView) view.findViewById(R.id.ligne);
 

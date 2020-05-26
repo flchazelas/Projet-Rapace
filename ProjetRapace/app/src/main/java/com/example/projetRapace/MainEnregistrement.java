@@ -57,7 +57,7 @@ public class MainEnregistrement extends BaseActivity {
                 String pseudo = editPseudo.getText().toString();
                 String mdp = editMdp.getText().toString();
                 String mdp_confirm = editMdpConfirm.getText().toString();
-                int num = Integer.parseInt(editNum.getText().toString());
+                String num = editNum.getText().toString();
                 if(!mdp.equals(mdp_confirm)){
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainEnregistrement.this);
 

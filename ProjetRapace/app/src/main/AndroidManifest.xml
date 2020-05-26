@@ -17,8 +17,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".ListeAlertesLocal"></activity>
-        <activity android:name=".BaseActivity" />
-        <activity android:name=".MainAlerte" />
+        <activity android:name=".BaseActivity"></activity>
+        <activity android:name=".MainAlerteActive"></activity>
         <activity android:name=".MainModificationUtilisateur" />
         <activity android:name=".MainAdministrationUtilisateur" />
         <activity android:name=".VueLocal" />

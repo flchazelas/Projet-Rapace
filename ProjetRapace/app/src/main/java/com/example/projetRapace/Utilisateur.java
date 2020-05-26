@@ -10,7 +10,7 @@ public class Utilisateur {
     private String mdp_utilisateur;
     private int isAdmin;
     private int isActif;
-    private int phone;
+    private String phone;
     private String date;
     private String dateCreation;
 
@@ -19,7 +19,7 @@ public class Utilisateur {
     /**
      * Constructeur Utilisateur
      */
-    public Utilisateur(int id,String pseudo, String mdp, int phone, int isAdmin, int isActif, String date, String dateCreation) {
+    public Utilisateur(int id,String pseudo, String mdp, String phone, int isAdmin, int isActif, String date, String dateCreation) {
         this.id_utilisateur=id;
         this.pseudo_utilisateur=pseudo;
         this.mdp_utilisateur=mdp;
@@ -48,7 +48,7 @@ public class Utilisateur {
         this.mdp_utilisateur=mdp;
     }
 
-    public Utilisateur(int id, String pseudo, String mdp, int phone) {
+    public Utilisateur(int id, String pseudo, String mdp, String phone) {
         this.pseudo_utilisateur=pseudo;
         this.mdp_utilisateur=mdp;
         this.phone = phone;
@@ -96,6 +96,14 @@ public class Utilisateur {
 
     public void setIsActif(int isActif) {
         this.isActif = isActif;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     /**
