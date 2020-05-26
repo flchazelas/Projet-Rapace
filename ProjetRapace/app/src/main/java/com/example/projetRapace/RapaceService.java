@@ -22,7 +22,7 @@ public class RapaceService extends IntentService {
     //Attribut de format de Date
     private SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
     private Date now;
-    private static final int T = 0;
+    private static final int T = 5;
 
     /**
      * Constructeur du Service
