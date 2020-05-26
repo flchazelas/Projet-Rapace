@@ -44,7 +44,8 @@
         </activity>
 
         <service android:name=".RapaceService" />
-        <service android:name = ".Alerte.CheckNewAlertService"/>
+        <service android:enabled="true" android:name = "com.example.projetRapace.Alerte.CheckNewAlertService"/>
+        <service android:enabled="true" android:name = "com.example.projetRapace.Alerte.CheckLocalNbActiveAlerts"/>
 
         <uses-library
             android:name="org.apache.http.legacy"

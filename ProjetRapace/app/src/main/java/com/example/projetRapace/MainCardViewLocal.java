@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.projetRapace.Local.Local;
@@ -39,7 +40,7 @@ public class MainCardViewLocal extends BaseActivity {
     private RecyclerView recyclerView;
 
     private List<Object> locaux = new ArrayList<Object>();
-    private Button buttonAjout;
+    private ImageButton buttonAjout;
     private Intent intent;
     private Intent intentSession;
     private AdapterCardView adapterCardView;
@@ -123,6 +124,8 @@ public class MainCardViewLocal extends BaseActivity {
         notificationHelper.notify(1, false, "My title", "My content" );
         Log.i("MainActivity", "Notification launched");
 
+        ((ImageButton)findViewById(R.id.buttonAlert)).setVisibility(View.GONE);
+
         ((Button)findViewById(R.id.ajoutLocal)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -139,7 +142,7 @@ public class MainCardViewLocal extends BaseActivity {
             }
         });
         findViewById(R.id.addLocalLayout).setVisibility(View.GONE);
-        buttonAjout = (Button)findViewById(R.id.buttonAdd);
+        buttonAjout = (ImageButton) findViewById(R.id.buttonAdd);
 
         // Lancement du Service de vérification de connexion
         intentSession = new Intent(MainCardViewLocal.this, RapaceService.class);

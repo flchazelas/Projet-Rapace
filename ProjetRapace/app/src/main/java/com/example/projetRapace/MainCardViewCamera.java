@@ -6,7 +6,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,10 +17,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.projetRapace.Alerte.CheckLocalNbActiveAlerts;
+import com.example.projetRapace.Alerte.CheckNewAlertService;
 import com.example.projetRapace.Camera.Camera;
 import com.example.projetRapace.Camera.CameraDBManager;
 
@@ -27,6 +33,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainCardViewCamera extends BaseActivity {
+
+    private int nbActiveAlert = -1;
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("broadcastReceiver", "(givenValue) -> " + intent.getIntExtra("nbActiveAlert",-1));
+            Log.d("broadcastReceiver", "(actualValue) -> " + nbActiveAlert);
+
+            updateAlertStatus(intent.getIntExtra("nbActiveAlert",-1));
+        }
+    };
     boolean shouldExecuteOnResume;
     private ProgressDialog mProgressDialog;
 
@@ -41,17 +58,26 @@ public class MainCardViewCamera extends BaseActivity {
     private RecyclerView recyclerView;
 
     private List<Object> cameras = new ArrayList<Object>();
-    private Button buttonAjout;
+    private ImageButton buttonAjout;
     private Intent intent;
     private Intent intentSession;
     private AdapterCardView adapterCardView;
 
     private static final int MENU_QUIT = 1;
 
-    /**
-     * Création d'un menu d'Items dans la Barre du Haut de l'application
-     * Ajout de l'option de déconnexion
-     * */
+    private void updateAlertStatus(int nbActiveAlert) {
+        this.nbActiveAlert = nbActiveAlert;
+        if(nbActiveAlert != 0){
+            ((ImageButton) findViewById(R.id.buttonAlert)).setImageTintList(getColorStateList(R.color.colorSoftRed));
+        }else{
+            ((ImageButton) findViewById(R.id.buttonAlert)).setImageTintList(getColorStateList(R.color.colorFullWhite));
+        }
+    }
+
+        /**
+         * Création d'un menu d'Items dans la Barre du Haut de l'application
+         * Ajout de l'option de déconnexion
+         * */
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_QUIT, 0, R.string.logout);
         return true;
@@ -108,7 +134,19 @@ public class MainCardViewCamera extends BaseActivity {
                 ((TextView) findViewById(R.id.textAddress)).setText("IP");
                 ((EditText) findViewById(R.id.editTextAddress)).setHint("http://vps814672.ovh.net/Data/videos/2020-05-10_23:54:27.123.mjpeg");
                 ((LinearLayout) findViewById(R.id.layoutNumero)).setVisibility(View.GONE);
-                buttonAjout = (Button) findViewById(R.id.buttonAdd);
+                buttonAjout = (ImageButton) findViewById(R.id.buttonAdd);
+
+                Intent intentService = new Intent(MainCardViewCamera.this, CheckLocalNbActiveAlerts.class);
+                intentService.putExtra("id_local",id_local);
+                startService(intentService);
+
+                //Navigation vers liste des alertes pour le local
+                ((ImageButton) findViewById(R.id.buttonAlert)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //start activity
+                    }
+                });
                 //Méthode onClick() du bouton d'ajout d'une Caméra
                 buttonAjout.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -309,5 +347,19 @@ public class MainCardViewCamera extends BaseActivity {
         });
 
         checkLoading.start();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.example.Alerte.ModifiedLocalActiveAlertesNumber");
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(broadcastReceiver);
     }
 }

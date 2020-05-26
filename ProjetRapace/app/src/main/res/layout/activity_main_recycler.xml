@@ -21,18 +21,29 @@
         android:layout_height="100dp"
         android:layout_alignParentBottom="true">
 
-        <Button
+        <ImageButton
+            android:id="@+id/buttonAlert"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:layout_margin="10dp"
+            android:layout_alignParentLeft="true"
+            app:srcCompat="@android:drawable/ic_dialog_alert" />
+
+        <ImageButton
             android:id="@+id/buttonAdd"
-            android:layout_width="80dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:text="+"
-            android:textSize="40sp"
-            android:textStyle="bold"
-            android:layout_marginVertical="10dp"
-            android:layout_marginHorizontal="10dp"/>
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:tint="#F8F8F8"
+            app:srcCompat="@drawable/plus_icon" />
     </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -8,8 +8,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +30,7 @@ import android.widget.Toast;
 
 import com.example.projetRapace.Alerte.Alerte;
 import com.example.projetRapace.Alerte.AlerteDBManager;
+import com.example.projetRapace.Alerte.CheckNewAlertService;
 import com.example.projetRapace.Camera.Camera;
 import com.example.projetRapace.Camera.CameraDBManager;
 import com.example.projetRapace.streamlib.MjpegView;
@@ -45,11 +49,23 @@ public class CameraView extends BaseActivity {
     private Intent intentSession;
     private ProgressDialog mProgressDialog;
 
+    private int id_camera;
+
     private boolean check_done = false;
     private boolean check_result = false;
     private boolean add_done = false;
     private boolean add_result = false;
     private boolean isThereActiveAlert = false;
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("broadcastReceiver", "(givenValue) -> " + intent.getBooleanExtra("isThereActiveAlert",false));
+            Log.d("broadcastReceiver", "(actualValue) -> " + isThereActiveAlert);
+
+            updateAlertStatus(intent.getBooleanExtra("isThereActiveAlert",false));
+        }
+    };
 
     /**
      * Création d'un menu d'Items dans la Barre du Haut de l'application
@@ -78,20 +94,22 @@ public class CameraView extends BaseActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         Intent intent = getIntent();
-        if(intent != null) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
+        setContentView(R.layout.activity_camera_view);
+        if(intent != null) {
             // Lancement du Service de vérification de connexion
             intentSession = new Intent(CameraView.this, RapaceService.class);
             startService(intentSession);
 
             final int id = intent.getIntExtra("id", -1);
+
             final String ip = intent.getStringExtra("ip");
             if (id != -1) {
-                requestWindowFeature(Window.FEATURE_NO_TITLE);
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN, WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+                id_camera = id;
                 mv = new MjpegView(this);
                 mv.setZOrderOnTop(false);
-                setContentView(R.layout.activity_camera_view);
 
                 RelativeLayout rl = (RelativeLayout) findViewById(R.id.ControlsHolder);
                 ((FrameLayout) findViewById(R.id.FrameHolder)).removeAllViews();
@@ -99,39 +117,72 @@ public class CameraView extends BaseActivity {
                 ((FrameLayout) findViewById(R.id.FrameHolder)).addView(rl);
 
                 final Activity context = this;
-
-                ((Button) findViewById(R.id.screenshotControl)).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                        }
-                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                        }
-
-                        //Création du nom selon la date et l'heure
-                        Calendar ca = Calendar.getInstance();
-                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS");
-                        String filename = df.format(ca.getTime());
-
-                        mv.screenshot(id,filename);
-                    }
-                });
-
                 Runnable r = new VideoLoaderAsync(mv, ip);
                 new Thread(r).start();
 
                 mv.startPlayback();
+
+                initView();
             }
         }
     }
 
+    private void initView(){
+        mProgressDialog = ProgressDialog.show(context, "Chargement...", " Chargement des informations de la caméra ...");
+        mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
+
+        check_done = false;
+        check_result = false;
+        AlerteDBManager.AlerteDBCallbackInterface callback = new AlerteDBManager.AlerteDBCallbackInterface() {
+            @Override
+            public void onQueryFinished(String operation, String output) {
+                Log.d("initView", "(onQueryFinished) -> "+ operation);
+                if(operation.equals(AlerteDBManager.ALERTE_DB_GETCURRENTFORCAMERA)){
+                    try {
+                        Log.d("initView", "(retour ALERTE_DB_GETCURRENTFORCAMERA) -> "+ output);
+                        if(!output.equals("NO_RESULT")){
+                            check_result = true;
+                        } else
+                            check_result = false;
+                        check_done = true;
+                    } catch (Exception e) {
+                        Toast.makeText(context, "Erreur lors de la vérification des alertes courantes.\nVeuillez réessayer ou contacter un administrateur.",Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        AlerteDBManager.getCurrentForCamera(callback,id_camera);
+
+        Thread checkLoading = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                while(!(check_done))
+                    Log.d("MainCardViewCamera", "(Waiting for checking to end) -> (check_done : " + check_done + ")");
+
+                context.runOnUiThread(new Runnable(){
+                    @Override
+                    public void run() {
+                        Intent intentService = new Intent(CameraView.this, CheckNewAlertService.class);
+                        intentService.putExtra("alertStatus",check_result);
+                        intentService.putExtra("id_camera",id_camera);
+                        startService(intentService);
+                        updateAlertStatus(check_result);
+                        if (mProgressDialog != null)
+                            mProgressDialog.dismiss();
+                    }
+                });
+            }
+        });
+        checkLoading.start();
+    }
+
     private void updateAlertStatus(boolean isThereActiveAlert){
         this.isThereActiveAlert = isThereActiveAlert;
+        Log.d("updateAlertStatus", "(isThereActiveAlert) -> (isThereActiveAlert : " + isThereActiveAlert + ")");
 
         if(isThereActiveAlert){
-            ((ImageButton) findViewById(R.id.alertButton)).setBackgroundColor(getResources().getColor(R.color.colorSoftRed));
+            ((ImageButton) findViewById(R.id.alertButton)).setBackgroundTintList(getColorStateList(R.color.colorSoftRed));
             ((ImageButton) findViewById(R.id.alertButton)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -157,7 +208,8 @@ public class CameraView extends BaseActivity {
                 }
             });
         }else{
-            ((ImageButton) findViewById(R.id.alertButton)).setBackgroundColor(getResources().getColor(R.color.colorFullWhite));
+            ((ImageButton) findViewById(R.id.alertButton)).setBackgroundTintList(getColorStateList(R.color.colorFullWhite));
+
             ((ImageButton) findViewById(R.id.alertButton)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -180,10 +232,10 @@ public class CameraView extends BaseActivity {
                                     AlerteDBManager.AlerteDBCallbackInterface callbackImage = new AlerteDBManager.AlerteDBCallbackInterface() {
                                         @Override
                                         public void onQueryFinished(String operation, String output) {
-                                            Log.d("updateAlertStatus", "(onQueryFinished) -> "+ operation);
+                                            Log.d("createAlert", "(onQueryFinished) -> "+ operation);
                                             if(operation.equals(AlerteDBManager.ALERTE_DB_ADD)){
                                                 try {
-                                                    Log.d("updateAlertStatus", "(retour ALERTE_DB_ADD) -> " + output);
+                                                    Log.d("createAlert", "(retour ALERTE_DB_ADD) -> " + output);
                                                     if(output.equals("INSERT_SUCCESSFUL"))
                                                         add_result = true;
                                                     else
@@ -195,13 +247,13 @@ public class CameraView extends BaseActivity {
                                             }
                                         }
                                     };
-                                    AlerteDBManager.addAlerte(callbackImage,alerte);
+                                    AlerteDBManager.addAlerte(callbackImage,alerte,id_camera);
 
                                     Thread checkLoading = new Thread(new Runnable(){
                                         @Override
                                         public void run() {
                                             while(!(add_done))
-                                                Log.d("loadPage", "(Waiting for add to end) -> (add_done : " + add_done);
+                                                Log.d("createAlert", "(Waiting for add to end) -> (add_done : " + add_done);
 
                                             context.runOnUiThread(new Runnable(){
                                                 @Override
@@ -244,5 +296,19 @@ public class CameraView extends BaseActivity {
         super.onResume();
         if(mv != null)
             mv.startPlayback();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.example.Alerte.ModifiedAlertStatus");
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(broadcastReceiver);
     }
 }

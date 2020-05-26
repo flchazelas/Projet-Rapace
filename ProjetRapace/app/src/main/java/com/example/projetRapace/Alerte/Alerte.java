@@ -72,7 +72,7 @@ public class Alerte {
     public static Alerte alerteFromJSON(JSONObject jsonObject){
         Alerte a;
         try {
-            a = new Alerte(jsonObject.getInt("id"),jsonObject.getBoolean("isActive"),jsonObject.getString("dateDebut"),jsonObject.getString("dateFin"));
+            a = new Alerte(jsonObject.getInt("id"),jsonObject.getInt("isActive") != 0,jsonObject.getString("dateDebut"),jsonObject.getString("dateFin"));
             return a;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -89,7 +89,7 @@ public class Alerte {
         for (int i = 0; i < jsonArray.length(); ++i) {
             try {
                 object = jsonArray.getJSONObject(i);
-                alerte = new Alerte(object.getInt("id"),object.getBoolean("isActive"),object.getString("dateDebut"),object.getString("dateFin"));
+                alerte = new Alerte(object.getInt("id"),object.getInt("isActive") != 0,object.getString("dateDebut"),object.getString("dateFin"));
                 alertes.add(alerte);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -102,7 +102,7 @@ public class Alerte {
     public JSONArray toJSON(){
         ArrayList list = new ArrayList();
         list.add(this.getId());
-        list.add(this.isActive());
+        list.add(this.isActive() ? 1 : 0);
         list.add(this.getDateDebut());
         list.add(this.getDateFin());
         return new JSONArray(list);

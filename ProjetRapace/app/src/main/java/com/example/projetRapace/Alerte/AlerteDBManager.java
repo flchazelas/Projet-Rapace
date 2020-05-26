@@ -18,6 +18,8 @@ public class AlerteDBManager  implements AsyncReponse {
     public static String ALERTE_DB_REMOVE = "REMOVE";
     public static String ALERTE_DB_GETBYCAMERA = "GET_BY_CAMERA";
     public static String ALERTE_DB_GETCURRENTFORCAMERA = "GET_CURRENT_FOR_CAMERA";
+    public static String ALERTE_DB_GETLOCALACTIVEALERTS = "GET_LOCAL_ACTIVE_ALERTS";
+    public static String ALERTE_DB_GETLOCALNONACTIVEALERTS = "GET_LOCAL_NONACTIVE_ALERTS";
 
     private static final String SERVER_ADDR = "http://51.178.182.46/alerte_db_access.php";
 
@@ -34,6 +36,7 @@ public class AlerteDBManager  implements AsyncReponse {
 
     @Override
     public void processFinish(String output) {
+        Log.d("AlerteDBManager", "(processFinish = " + output + ")");
         String[] msg = output.split("%");
         if(msg.length > 1){
             try {
@@ -47,14 +50,15 @@ public class AlerteDBManager  implements AsyncReponse {
         }
     }
 
-    public static void addAlerte(AlerteDBCallbackInterface callback, Alerte a){
+    public static void addAlerte(AlerteDBCallbackInterface callback, Alerte a, int id_camera){
         AccesHTTP accesHTTP = new AccesHTTP();;
         accesHTTP.delegate = new AlerteDBManager(callback);
 
         accesHTTP.addParam("operation", ALERTE_DB_ADD);
         Map<String,Object> data = new HashMap<>();
-        data.put("isActive", a.isActive());
+        data.put("isActive", a.isActive() ? 1 : 0);
         data.put("dateDebut", a.getDateDebut());
+        data.put("id_camera", id_camera);
         accesHTTP.addParam("donnees", gson.toJson(data));
         Log.d("AlerteDBManager", "(addAlerte) -> "+ gson.toJson(data));
 
@@ -70,7 +74,35 @@ public class AlerteDBManager  implements AsyncReponse {
         data.put("id_camera", id_camera);
         accesHTTP.addParam("donnees", gson.toJson(data));
 
-        Log.d("AlerteDBManager", "(getCurrentForCamera) -> " + gson.toJson(data));
+        Log.d("AlerteDBManager", "(getCurrentForCamera) -> " +  gson.toJson(data));
+
+        accesHTTP.execute(SERVER_ADDR);
+    }
+
+    public static void getLocalActiveAlerts(AlerteDBCallbackInterface callback, int id_local){
+        AccesHTTP accesHTTP = new AccesHTTP();;
+        accesHTTP.delegate = new AlerteDBManager(callback);
+
+        accesHTTP.addParam("operation", ALERTE_DB_GETLOCALACTIVEALERTS);
+        Map<String,Object> data = new HashMap<>();
+        data.put("id_local", id_local);
+        accesHTTP.addParam("donnees", gson.toJson(data));
+
+        Log.d("AlerteDBManager", "(getCurrentForCamera) -> " +  gson.toJson(data));
+
+        accesHTTP.execute(SERVER_ADDR);
+    }
+
+    public static void getLocalNActiveAlerts(AlerteDBCallbackInterface callback, int id_local){
+        AccesHTTP accesHTTP = new AccesHTTP();;
+        accesHTTP.delegate = new AlerteDBManager(callback);
+
+        accesHTTP.addParam("operation", ALERTE_DB_GETLOCALNONACTIVEALERTS);
+        Map<String,Object> data = new HashMap<>();
+        data.put("id_local", id_local);
+        accesHTTP.addParam("donnees", gson.toJson(data));
+
+        Log.d("AlerteDBManager", "(getCurrentForCamera) -> " +  gson.toJson(data));
 
         accesHTTP.execute(SERVER_ADDR);
     }
