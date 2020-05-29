@@ -123,7 +123,7 @@ public class MainCardViewLocal extends BaseActivity {
 
         //Lancement de la notification
         NotificationHelper notificationHelper = new NotificationHelper(MainCardViewLocal.this);
-        notificationHelper.notify(1, false, "My title", "My content" );
+        notificationHelper.notify(1, false, "Alerte Intrusion", "Intrusion dans votre Local !" );
         Log.i("MainActivity", "Notification launched");
 
         ((ImageButton)findViewById(R.id.buttonAlert)).setVisibility(View.GONE);
