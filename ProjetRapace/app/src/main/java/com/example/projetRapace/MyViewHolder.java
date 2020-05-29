@@ -1,18 +1,29 @@
 package com.example.projetRapace;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetRapace.Camera.Camera;
 import com.example.projetRapace.Local.Local;
+import com.example.projetRapace.streamlib.MjpegInputStream;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MyViewHolder extends RecyclerView.ViewHolder{
 
@@ -76,8 +87,32 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
         });
 
         textViewView.setText(local.getName());
-        if(local.getImage() != null)
-            Picasso.get().load(local.getImage()).centerCrop().fit().into(imageView);
+        if(local.getImage() == null){
+            Picasso.get().load(Local.defaultImage).centerCrop().fit().into(imageView);
+            return;
+        }
+        final String camIP = local.getImage();
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                Log.d("bitmap", "(start)");
+                MjpegInputStream inputStream = MjpegInputStream.read(camIP);
+                try {
+                    final Bitmap b = inputStream.readMjpegFrame();
+                    Activity context = (Activity) itemView.getContext();
+                    context.runOnUiThread(new Runnable(){
+                        @Override
+                        public void run() {
+                            imageView.setImageBitmap(b);
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.d("bitmap", "(done)");
+            }
+        });
+        thread.start();
     }
 
     /**
@@ -108,7 +143,32 @@ public class MyViewHolder extends RecyclerView.ViewHolder{
             }
         });
 
+
         textViewView.setText(camera.getName());
-        Picasso.get().load(camera.getIp()).centerCrop().fit().into(imageView);
+
+        final Camera cam = camera;
+        Thread thread = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                Log.d("bitmap", "(start)");
+                MjpegInputStream inputStream = MjpegInputStream.read(cam.getIp());
+                try {
+                    final Bitmap b = inputStream.readMjpegFrame();
+                    Activity context = (Activity) itemView.getContext();
+                    context.runOnUiThread(new Runnable(){
+                        @Override
+                        public void run() {
+                            imageView.setImageBitmap(b);
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.d("bitmap", "(done)");
+            }
+        });
+        thread.start();
+
+        //Picasso.get().load(camera.getIp()).centerCrop().fit().into(imageView);
     }
 }

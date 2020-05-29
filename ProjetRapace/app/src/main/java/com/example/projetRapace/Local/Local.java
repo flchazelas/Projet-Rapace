@@ -15,6 +15,7 @@ public class Local{
     private String phoneNumber;
 
     private String image; //présent uniquement en local
+    public static String defaultImage = "https://fr.zenit.org/wp-content/uploads/2018/05/no-image-icon.png";
 
     public Local(int id, String name, String address, String phoneNumber){
         this.setId(id);
@@ -22,7 +23,7 @@ public class Local{
         this.setAddress(address);
         this.setPhoneNumber(phoneNumber);
 
-        this.setImage("https://fr.zenit.org/wp-content/uploads/2018/05/no-image-icon.png");
+        this.setImage(null);
     }
 
     public Local(String name, String address, String phoneNumber){
@@ -30,7 +31,7 @@ public class Local{
         this.setAddress(address);
         this.setPhoneNumber(phoneNumber);
 
-        this.setImage("https://fr.zenit.org/wp-content/uploads/2018/05/no-image-icon.png");
+        this.setImage(null);
     }
 
     /**
@@ -64,6 +65,8 @@ public class Local{
         Local l;
         try {
             l = new Local(jsonObject.getInt("id"),jsonObject.getString("name"),jsonObject.getString("address"), jsonObject.getString("numeroUrgence"));
+            if(jsonObject.has("CameraIP"))
+                l.setImage(jsonObject.getString("CameraIP"));
             return l;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -81,6 +84,9 @@ public class Local{
             try {
                 object = jsonArray.getJSONObject(i);
                 l = new Local(object.getInt("id"),object.getString("name"),object.getString("address"), object.getString("numeroUrgence"));
+
+                if(object.has("CameraIP"))
+                    l.setImage(object.getString("CameraIP"));
 
                 locaux.add(l);
             } catch (JSONException e) {

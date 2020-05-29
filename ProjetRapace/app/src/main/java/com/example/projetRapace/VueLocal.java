@@ -347,13 +347,11 @@ public class VueLocal extends BaseActivity {
                                         context.runOnUiThread(new Runnable(){
                                             @Override
                                             public void run() {
-                                                if(removeresult){
-                                                    Intent intent = new Intent(context, VueCamera.class);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                    startActivity(intent);
-                                                }
                                                 if (mProgressDialog != null)
                                                     mProgressDialog.dismiss();
+                                                if(removeresult){
+                                                    finish();
+                                                }
                                             }
                                         });
                                     }

@@ -8,6 +8,10 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.projetRapace.Camera.Camera;
+
+import org.json.JSONObject;
+
 public class CheckNewAlertService extends IntentService {
     private static CheckNewAlertService instance;
     public Context context = this;
@@ -16,6 +20,7 @@ public class CheckNewAlertService extends IntentService {
     private Thread checkLoading;
 
     private int id_camera = -1;
+    private Alerte alerte = null;
     private boolean isThereActiveAlert = false;
     private boolean check_done = false;
     private boolean check_result = false;
@@ -54,6 +59,9 @@ public class CheckNewAlertService extends IntentService {
                                // Log.d("CheckNewAlertService", "(retour ALERTE_DB_GETCURRENTFORCAMERA) -> "+ output);
                                 if(!output.equals("NO_RESULT")){
                                     check_result = true;
+                                    JSONObject jsonResult = new JSONObject(output);
+                                    alerte = Alerte.alerteFromJSON(jsonResult);
+                                    Log.d("VueCamera", "(retour ALERTE_DB_GETCURRENTFORCAMERA) -> "+ alerte);
                                 } else
                                     check_result = false;
                                 check_done = true;
@@ -86,6 +94,10 @@ public class CheckNewAlertService extends IntentService {
                             Intent intent1 = new Intent();
                             intent1.setAction("com.example.Alerte.ModifiedAlertStatus");
                             intent1.putExtra("isThereActiveAlert", check_result);
+                            if(check_result)
+                                intent1.putExtra("id_alert", alerte.getId());
+                            else
+                                intent1.putExtra("id_alert", -1);
                             isThereActiveAlert = check_result;
                             sendBroadcast(intent1);
                         }

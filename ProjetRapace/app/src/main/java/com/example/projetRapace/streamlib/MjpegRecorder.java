@@ -120,8 +120,8 @@ public class MjpegRecorder {
             isRecordOn = false;
             recordEnd = System.currentTimeMillis();
 
-            Log.v("RECORD", "Recording finished");
             saveRecord(idCam, bitmaps, recordEnd - recordStart);
+            Log.v("RECORD", "Recording finished");
             writeLock.unlock();
             return true;
         } catch (Exception e) {

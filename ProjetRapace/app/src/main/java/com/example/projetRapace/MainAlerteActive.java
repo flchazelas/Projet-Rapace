@@ -217,7 +217,6 @@ public class MainAlerteActive extends AppCompatActivity {
 
 
     public void recupListeIV(final List<Object> listeI){
-
         final String[] strings = new String[listeI.size()];
         for (int i=0; i<listeI.size(); i++){
             Log.d("LIST : ", String.valueOf(listeI.get(i).getClass().toString().equals(Video.class.toString())));
@@ -231,16 +230,13 @@ public class MainAlerteActive extends AppCompatActivity {
             }
         }
 
-
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strings){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = convertView;
 
-                if (view == null)
-                {
+                if (view == null) {
                     LayoutInflater li = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    //le layout représentant la ligne dans le listView
                     view = li.inflate(R.layout.ligne_liste_iv, null);
                 }
 
@@ -259,8 +255,6 @@ public class MainAlerteActive extends AppCompatActivity {
     }
 
     public void loadPage(){
-
-
         pageLoading = false;
         alerte = null;
         camera = null;

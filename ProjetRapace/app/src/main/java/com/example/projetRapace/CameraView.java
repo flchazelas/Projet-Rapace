@@ -49,6 +49,7 @@ public class CameraView extends BaseActivity {
     private Intent intentSession;
     private Intent intentService;
     private ProgressDialog mProgressDialog;
+    private int current_alerte_id = -1;
 
     private int id_camera;
 
@@ -63,6 +64,7 @@ public class CameraView extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             Log.d("broadcastReceiver", "(givenValue) -> " + intent.getBooleanExtra("isThereActiveAlert",false));
             Log.d("broadcastReceiver", "(actualValue) -> " + isThereActiveAlert);
+            current_alerte_id = intent.getIntExtra("id_alert",-1);
 
             updateAlertStatus(intent.getBooleanExtra("isThereActiveAlert",false));
         }
@@ -196,7 +198,10 @@ public class CameraView extends BaseActivity {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(context, "Redirection vers l'alerte",Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(context, MainAlerteActive.class);
+                                    intent.putExtra("id", current_alerte_id);
+                                    startActivity(intent);
+                                    finish();
                                 }
                             });
                     builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
@@ -270,12 +275,20 @@ public class CameraView extends BaseActivity {
                                                                 Log.d("createAlert", "(onQueryFinished) -> "+ operation);
                                                                 if(operation.equals(AlerteDBManager.ALERTE_DB_GETCURRENTFORCAMERA)){
                                                                     try {
-                                                                        Log.d("createAlert", "(retour ALERTE_DB_ADD) -> " + output);
-                                                                        if(output.equals("INSERT_SUCCESSFUL"))
-                                                                            add_result = true;
-                                                                        else
-                                                                            add_result = false;
-                                                                        add_done = true;
+                                                                        Log.d("createAlert", "(retour CAMERA_DB_GETCURRENTFORCAMERA) -> " + output);
+                                                                        if(!output.equals("NO_RESULT")){
+                                                                            check_result = true;
+                                                                            JSONObject jsonResult = new JSONObject(output);
+                                                                            Alerte alerte = Alerte.alerteFromJSON(jsonResult);
+                                                                            Log.d("createAlert", "(retour CAMERA_DB_GETBYID) -> "+ alerte);
+
+                                                                            Intent intent = new Intent(context, MainAlerteActive.class);
+                                                                            intent.putExtra("id", alerte.getId());
+                                                                            startActivity(intent);
+                                                                            finish();
+                                                                        } else
+                                                                            check_result = false;
+                                                                        check_done = true;
                                                                     } catch (Exception e) {
                                                                         e.printStackTrace();
                                                                     }

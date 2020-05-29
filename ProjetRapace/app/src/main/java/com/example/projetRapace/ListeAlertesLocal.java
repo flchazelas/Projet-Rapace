@@ -129,7 +129,7 @@ public class ListeAlertesLocal extends AppCompatActivity {
             if (id != -1) {
                 id_local = id;
 
-                alertesEnCoursCamName = new ArrayAdapter<Alerte>(context, android.R.layout.simple_list_item_2, android.R.id.text1,alertesNonActives) {
+                alertesEnCoursCamName = new ArrayAdapter<Alerte>(context, android.R.layout.simple_list_item_2, android.R.id.text1,alertesActives) {
                     @Override
                     public int getCount(){
                         return alertesActives.size();
